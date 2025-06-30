@@ -31,3 +31,48 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Eclipse
+*.launch
+.settings/
+.project
+.classpath
+
+# IntelliJ (caso você abra em outra IDE futuramente)
+.idea/
+*.iml
+*.iws
+out/
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Arquivos temporários e backups
+*.swp
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# VS Code (caso use)
+.vscode/
+
+# Arquivos de build temporário
+bin/
+
