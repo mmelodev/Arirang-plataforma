@@ -7,9 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity
+//@Entity
 
-public class Aluno {
+public class AlunoDTO {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -48,10 +48,10 @@ public class Aluno {
 	public void setDataNascimento(LocalDate dataNascimento) {
 		this.dataNascimento = dataNascimento;
 	}
-	public Aluno() {
+	public AlunoDTO() {
 		super();
 	}
-	public Aluno(Long id, String nomeCompleto, String email, String cpf, LocalDate dataNascimento) {
+	public AlunoDTO(Long id, String nomeCompleto, String email, String cpf, LocalDate dataNascimento) {
 		super();
 		this.id = id;
 		this.nomeCompleto = nomeCompleto;
