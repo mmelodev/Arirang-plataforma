@@ -132,3 +132,7 @@ O projeto AriranG é um sistema de gestão escolar desenvolvido com Spring Boot,
   - MySQL
 - **Próximos Passos**:
   - Semana 4: Expansão para gerenciamento de professores e turmas, testes de integração.
+### Atualização de Ferramentas (23 de julho de 2025)
+- Projeto migrado do Eclipse para IntelliJ Ultimate com sucesso.
+- Configurações ajustadas: JDK, Maven, Spring Boot, e Database Tool integrados.
+- Próximos Passos: Início da Semana 4 de Junho com entidades Professor e Turma.
