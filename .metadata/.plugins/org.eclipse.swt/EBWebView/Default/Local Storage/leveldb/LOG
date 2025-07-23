@@ -1,2 +1,3 @@
-2025/06/30-09:59:18.539 3490 Creating DB C:\Users\Desenvolve Cidade\git\Arirang-plataforma\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb since it was missing.
-2025/06/30-09:59:18.661 3490 Reusing MANIFEST C:\Users\Desenvolve Cidade\git\Arirang-plataforma\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2025/07/23-10:58:57.611 1398 Reusing MANIFEST C:\Users\Desenvolve Cidade\git\Arirang-plataforma\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2025/07/23-10:58:57.633 1398 Recovering log #3
+2025/07/23-10:58:57.637 1398 Reusing old log C:\Users\Desenvolve Cidade\git\Arirang-plataforma\.metadata\.plugins\org.eclipse.swt\EBWebView\Default\Local Storage\leveldb/000003.log 
