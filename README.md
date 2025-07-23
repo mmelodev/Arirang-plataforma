@@ -125,7 +125,6 @@ O projeto AriranG é um sistema de gestão escolar desenvolvido com Spring Boot,
 - **Resultados**:
   - Total de atualizações testadas: [insira o número, ex.: 2].
   - Total de exclusões testadas: [insira o número, ex.: 1].
-  - Observações: [anote qualquer comportamento inesperado, ex.: "Sem erros reportados"].
 - **Tecnologias**:
   - Spring Boot 3.2.5
   - Hibernate 6.4.4.Final
@@ -136,3 +135,9 @@ O projeto AriranG é um sistema de gestão escolar desenvolvido com Spring Boot,
 - Projeto migrado do Eclipse para IntelliJ Ultimate com sucesso.
 - Configurações ajustadas: JDK, Maven, Spring Boot, e Database Tool integrados.
 - Próximos Passos: Início da Semana 4 de Junho com entidades Professor e Turma.
+### Semana 4, 23-29 de junho (23 de julho de 2025)
+- **To Do**: Criar entidades Professor e Turma, implementar controllers.
+- **In Progress**: Testar endpoints de professores e turmas, iniciar integração.
+- **Done**: CRUD básico para professores e turmas concluído.
+- **Entregável**: API expandida para professores e turmas.
+- **Próximos Passos**: Iniciar relações Turma-Aluno e interface web.
