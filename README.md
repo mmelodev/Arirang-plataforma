@@ -147,3 +147,8 @@ O projeto AriranG é um sistema de gestão escolar desenvolvido com Spring Boot,
 - **Done**: CRUD básico para professores e turmas concluído.
 - **Entregável**: API expandida para professores e turmas.
 - **Próximos Passos**: Iniciar relações Turma-Aluno e interface web.
+### Correção de Loop Infinito (27 de julho de 2025)
+- Resolvido problema de serialização infinita nos endpoints /turmas e /alunos devido a relação bidirecional Turma-Aluno.
+- Implementada solução com @JsonManagedReference e @JsonBackReference.
+- Resultados: Resposta JSON agora é finita e consistente.
+- Próximos Passos: Continuar com a Semana 1 de Julho.

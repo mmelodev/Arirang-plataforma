@@ -1,6 +1,8 @@
 package br.com.arirang.plataforma.controller;
 
 import java.util.List;
+
+import br.com.arirang.plataforma.entity.Aluno;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,13 @@ public class TurmaController {
     public ResponseEntity<List<Turma>> listarTodasTurmas() {
         List<Turma> turmas = turmaRepository.findAll();
         return ResponseEntity.ok(turmas);
+    }
+
+    @GetMapping("/{id}/alunos")
+    public ResponseEntity<List<Aluno>> listarAlunosDaTurma(@PathVariable Long id) {
+        return turmaRepository.findById(id)
+                .map(turma -> ResponseEntity.ok(turma.getAlunos()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
