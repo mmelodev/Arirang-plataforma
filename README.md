@@ -152,3 +152,40 @@ O projeto AriranG é um sistema de gestão escolar desenvolvido com Spring Boot,
 - Implementada solução com @JsonManagedReference e @JsonBackReference.
 - Resultados: Resposta JSON agora é finita e consistente.
 - Próximos Passos: Continuar com a Semana 1 de Julho.
+### Semana 1, 30 de junho - 6 de julho (28 de julho de 2025)
+- **To Do**: Implementar relações (ex.: Turma-Aluno).
+- **In Progress**: Ajustar controllers para relações.
+- **Done**: Modelo relacional funcional.
+- **Entregável**: Modelo relacional funcional.
+- **Resultados**: [Insira número de testes bem-sucedidos, ex.: 10].
+- **Próximos Passos**: Desenvolver endpoint de matrícula.
+### Reset do Banco de Dados (28 de julho de 2025)
+- Esvaziadas as tabelas professor, turma e aluno no MySQL usando TRUNCATE após desativar FOREIGN_KEY_CHECKS.
+- Backup criado: arirang_backup_20250728.sql.
+- Próximos Passos: Desenvolver endpoint de matrícula (2 de julho).
+### Correção de Erro 500 na Criação de Aluno (28 de julho de 2025)
+- Resolvido erro 500 Internal Server Error ao criar aluno com turma inexistente.
+- Ajustado AlunoController para validar e carregar Turma antes de salvar.
+- Próximos Passos: Validar e testar o endpoint de matrícula.
+### Semana 1, 30 de junho - 6 de julho (28 de julho de 2025)
+- **To Do**: Desenvolver endpoint de matrícula (concluído).
+- **In Progress**: Validar e testar o endpoint de matrícula.
+- **Done**: Modelo relacional funcional, endpoint de matrícula funcional.
+- **Entregável**: Endpoint de matrícula funcional.
+- **Resultados**: [Insira número de testes bem-sucedidos, ex.: 8].
+- **Próximos Passos**: Iniciar adaptações para novas funcionalidades (Semana 3 de Julho).
+### Correção de Erro 404 no Endpoint de Solicitação (28 de julho de 2025)
+- Resolvido erro 404 Not Found no endpoint /solicitacoes/mudanca-turma.
+- Verificado mapeamento do controlador e criados dados de teste.
+- Próximos Passos: Continuar testes do endpoint de solicitação.
+### Correção de Validação para Mesma Turma (28 de julho de 2025)
+- Ajustada validação com @Transactional e depuração aprimorada para comparar IDs.
+- Resolvido caso 201 Created para {"alunoId": 5, "turmaNovaId": 1}, agora retorna 400 Bad Request.
+- Próximos Passos: Continuar testes e implementar aprovação/rejeição.
+### Semana 3, 14 de julho - 20 de julho (28 de julho de 2025)
+- **To Do**: Implementar aprovação/rejeição de solicitações.
+- **In Progress**: Testar endpoints de aprovação/rejeição.
+- **Done**: Modelo relacional funcional, endpoint de matrícula funcional, endpoint de solicitação funcional.
+- **Entregável**: Endpoints de aprovação e rejeição implementados.
+- **Resultados**: [Insira número de testes bem-sucedidos, ex.: 8].
+- **Próximos Passos**: Finalizar testes e planejar próxima funcionalidade.

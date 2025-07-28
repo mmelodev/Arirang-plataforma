@@ -1,10 +1,12 @@
 package br.com.arirang.plataforma.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-
-import java.util.List;
 
 @Entity
 public class Aluno {
@@ -24,7 +26,6 @@ public class Aluno {
     @JoinColumn(name = "turma_id")
     @JsonBackReference
     private Turma turma;
-
 
     // Getters e Setters
     public Long getId() { return id; }

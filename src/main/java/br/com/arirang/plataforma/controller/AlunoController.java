@@ -6,14 +6,7 @@ import br.com.arirang.plataforma.entity.Turma;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.repository.AlunoRepository;
 import br.com.arirang.plataforma.repository.TurmaRepository;
@@ -21,15 +14,19 @@ import br.com.arirang.plataforma.repository.TurmaRepository;
 @RestController
 @RequestMapping("/alunos")
 public class AlunoController {
-    
-    @Autowired
-    private AlunoRepository alunoRepository;
 
     @Autowired
+    private AlunoRepository alunoRepository;
+    @Autowired
     private TurmaRepository turmaRepository;
-    
+
     @PostMapping
     public ResponseEntity<Aluno> criarAluno(@RequestBody Aluno novoAluno) {
+        if (novoAluno.getTurma() != null && novoAluno.getTurma().getId() != null) {
+            Turma turma = turmaRepository.findById(novoAluno.getTurma().getId())
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+            novoAluno.setTurma(turma);
+        }
         Aluno salvo = alunoRepository.save(novoAluno);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
@@ -80,5 +77,9 @@ public class AlunoController {
         return ResponseEntity.notFound().build();
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 
 }

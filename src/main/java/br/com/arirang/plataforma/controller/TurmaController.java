@@ -1,8 +1,6 @@
 package br.com.arirang.plataforma.controller;
 
 import java.util.List;
-
-import br.com.arirang.plataforma.entity.Aluno;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,14 +12,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import jakarta.validation.Valid;
+import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.repository.TurmaRepository;
+import br.com.arirang.plataforma.repository.AlunoRepository;
 
 @RestController
 @RequestMapping("/turmas")
 public class TurmaController {
     @Autowired
     private TurmaRepository turmaRepository;
+    @Autowired
+    private AlunoRepository alunoRepository;
 
     @PostMapping
     public ResponseEntity<Turma> criarTurma(@RequestBody Turma novaTurma) {
@@ -68,5 +72,28 @@ public class TurmaController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{turmaId}/matricular")
+    public ResponseEntity<String> matricularAluno(@PathVariable Long turmaId, @RequestBody @Valid MatriculaRequest matriculaRequest) {
+        Turma turma = turmaRepository.findById(turmaId)
+                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
+        Aluno aluno = alunoRepository.findById(matriculaRequest.alunoId())
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+
+        if (aluno.getTurma() != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Aluno já está matriculado em outra turma.");
+        }
+
+        aluno.setTurma(turma);
+        alunoRepository.save(aluno);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Aluno matriculado com sucesso na turma " + turmaId);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 }
