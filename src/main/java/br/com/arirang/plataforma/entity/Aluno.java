@@ -8,6 +8,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 public class Aluno {
     @Id
@@ -20,7 +23,7 @@ public class Aluno {
     private String nacionalidade;
     private String cep;
     private String endereco;
-    private String dataNascimento;
+    private LocalDateTime dataNascimento;
     private boolean responsavelFinanceiro;
     @ManyToOne
     @JoinColumn(name = "turma_id")
@@ -44,8 +47,8 @@ public class Aluno {
     public void setCep(String cep) { this.cep = cep; }
     public String getEndereco() { return endereco; }
     public void setEndereco(String endereco) { this.endereco = endereco; }
-    public String getDataNascimento() { return dataNascimento; }
-    public void setDataNascimento(String dataNascimento) { this.dataNascimento = dataNascimento; }
+    public LocalDateTime getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(LocalDateTime dataNascimento) { this.dataNascimento = dataNascimento; }
     public boolean isResponsavelFinanceiro() { return responsavelFinanceiro; }
     public void setResponsavelFinanceiro(boolean responsavelFinanceiro) { this.responsavelFinanceiro = responsavelFinanceiro; }
     public Turma getTurma() { return turma; }

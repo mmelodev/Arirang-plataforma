@@ -189,3 +189,25 @@ O projeto AriranG é um sistema de gestão escolar desenvolvido com Spring Boot,
 - **Entregável**: Endpoints de aprovação e rejeição implementados.
 - **Resultados**: [Insira número de testes bem-sucedidos, ex.: 8].
 - **Próximos Passos**: Finalizar testes e planejar próxima funcionalidade.
+### Atualizações - 31 de julho de 2025
+- **Resolvido**: Exposição de entidades JPA com uso de DTOs.
+- **Em Progresso**: Implementação de tratamento de exceções global com @ControllerAdvice.
+- **Próximos Passos**: Validar outros itens do relatório (Lógica de Negócio, Status como Enum, Validação de Entrada).
+### Atualizações - 31 de julho de 2025
+- **Resolvido**: Exposição de entidades JPA com uso de DTOs.
+- **Resolvido**: Tratamento de exceções global com @ControllerAdvice.
+- **Resolvido**: Movendo lógica de negócio para camada de serviço.
+- **Próximos Passos**: Validar Uso de Strings para Status e Validação de Entrada.
+### Atualizações - 31 de julho de 2025
+- **Resolvido**: Exposição de entidades JPA com uso de DTOs.
+- **Resolvido**: Tratamento de exceções global com @ControllerAdvice.
+- **Resolvido**: Movendo lógica de negócio para camada de serviço.
+- **Resolvido**: Uso de Strings para Status substituído por Enum.
+- **Próximos Passos**: Validar Validação de Entrada.
+### Atualizações - 31 de julho de 2025
+- **Resolvido**: Exposição de entidades JPA com uso de DTOs.
+- **Resolvido**: Tratamento de exceções global com @ControllerAdvice.
+- **Resolvido**: Movendo lógica de negócio para camada de serviço.
+- **Resolvido**: Uso de Strings para Status substituído por Enum.
+- **Resolvido**: Validação de Entrada implementada com Bean Validation.
+- **Próximos Passos**: Revisão geral ou melhorias adicionais (sugerir se desejar).

@@ -1,85 +1,145 @@
 package br.com.arirang.plataforma.controller;
 
-import java.util.List;
-
-import br.com.arirang.plataforma.entity.Turma;
+import br.com.arirang.plataforma.dto.AlunoDTO;
+import br.com.arirang.plataforma.entity.Aluno;
+import br.com.arirang.plataforma.service.AlunoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import br.com.arirang.plataforma.entity.Aluno;
-import br.com.arirang.plataforma.repository.AlunoRepository;
-import br.com.arirang.plataforma.repository.TurmaRepository;
 
-@RestController
+import jakarta.validation.Valid;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Controller // Mantido como @Controller para suportar Thymeleaf
 @RequestMapping("/alunos")
 public class AlunoController {
 
     @Autowired
-    private AlunoRepository alunoRepository;
-    @Autowired
-    private TurmaRepository turmaRepository;
+    private AlunoService alunoService;
 
-    @PostMapping
-    public ResponseEntity<Aluno> criarAluno(@RequestBody Aluno novoAluno) {
-        if (novoAluno.getTurma() != null && novoAluno.getTurma().getId() != null) {
-            Turma turma = turmaRepository.findById(novoAluno.getTurma().getId())
-                    .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-            novoAluno.setTurma(turma);
-        }
-        Aluno salvo = alunoRepository.save(novoAluno);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
-    }
-    
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
     @GetMapping
-    public ResponseEntity<List<Aluno>> listarTodosAlunos() {
-        List<Aluno> alunos = alunoRepository.findAll();
+    public ResponseEntity<List<AlunoDTO>> listarTodosAlunos() {
+        List<AlunoDTO> alunos = alunoService.listarTodosAlunos().stream()
+                .map(aluno -> new AlunoDTO(
+                        aluno.getId(),
+                        aluno.getNomeCompleto(),
+                        aluno.getEmail(),
+                        aluno.getCpf(),
+                        aluno.getRgRne(),
+                        aluno.getNacionalidade(),
+                        aluno.getCep(),
+                        aluno.getEndereco(),
+                        aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
+                        aluno.isResponsavelFinanceiro()
+                )).collect(Collectors.toList());
         return ResponseEntity.ok(alunos);
     }
 
+    @GetMapping("/lista")
+    public String listarAlunos(Model model) {
+        model.addAttribute("alunos", alunoService.listarTodosAlunos().stream()
+                .map(aluno -> new AlunoDTO(
+                        aluno.getId(),
+                        aluno.getNomeCompleto(),
+                        aluno.getEmail(),
+                        aluno.getCpf(),
+                        aluno.getRgRne(),
+                        aluno.getNacionalidade(),
+                        aluno.getCep(),
+                        aluno.getEndereco(),
+                        aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
+                        aluno.isResponsavelFinanceiro()
+                )).collect(Collectors.toList()));
+        return "alunos"; // Template Thymeleaf
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Aluno> buscarAlunoPorId(@PathVariable Long id) {
-        return alunoRepository.findById(id)
-                .map(aluno -> ResponseEntity.ok(aluno))
+    public ResponseEntity<AlunoDTO> buscarAlunoPorId(@PathVariable Long id) {
+        return alunoService.buscarAlunoPorId(id)
+                .map(aluno -> new AlunoDTO(
+                        aluno.getId(),
+                        aluno.getNomeCompleto(),
+                        aluno.getEmail(),
+                        aluno.getCpf(),
+                        aluno.getRgRne(),
+                        aluno.getNacionalidade(),
+                        aluno.getCep(),
+                        aluno.getEndereco(),
+                        aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
+                        aluno.isResponsavelFinanceiro()
+                ))
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<AlunoDTO> criarAluno(@Valid @RequestBody AlunoDTO novoAluno) {
+        Aluno aluno = alunoService.criarAluno(
+                novoAluno.nomeCompleto(),
+                novoAluno.email(),
+                novoAluno.cpf(),
+                novoAluno.rgRne(),
+                novoAluno.nacionalidade(),
+                novoAluno.cep(),
+                novoAluno.endereco(),
+                novoAluno.dataNascimento(),
+                novoAluno.responsavelFinanceiro(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AlunoDTO(
+                aluno.getId(),
+                aluno.getNomeCompleto(),
+                aluno.getEmail(),
+                aluno.getCpf(),
+                aluno.getRgRne(),
+                aluno.getNacionalidade(),
+                aluno.getCep(),
+                aluno.getEndereco(),
+                aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
+                aluno.isResponsavelFinanceiro()
+        ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Aluno> atualizarAluno(@PathVariable Long id, @RequestBody Aluno alunoAtualizado) {
-        return alunoRepository.findById(id)
-                .map(alunoExistente -> {
-                    alunoExistente.setNomeCompleto(alunoAtualizado.getNomeCompleto());
-                    alunoExistente.setEmail(alunoAtualizado.getEmail());
-                    alunoExistente.setCpf(alunoAtualizado.getCpf());
-                    alunoExistente.setRgRne(alunoAtualizado.getRgRne());
-                    alunoExistente.setNacionalidade(alunoAtualizado.getNacionalidade());
-                    alunoExistente.setCep(alunoAtualizado.getCep());
-                    alunoExistente.setEndereco(alunoAtualizado.getEndereco());
-                    alunoExistente.setDataNascimento(alunoAtualizado.getDataNascimento());
-                    alunoExistente.setResponsavelFinanceiro(alunoAtualizado.isResponsavelFinanceiro());
-                    if (alunoAtualizado.getTurma() != null && alunoAtualizado.getTurma().getId() != null) {
-                        Turma turma = turmaRepository.findById(alunoAtualizado.getTurma().getId())
-                                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-                        alunoExistente.setTurma(turma);
-                    }
-                    Aluno salvo = alunoRepository.save(alunoExistente);
-                    return ResponseEntity.ok(salvo);
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<AlunoDTO> atualizarAluno(@PathVariable Long id, @Valid @RequestBody AlunoDTO alunoAtualizado) {
+        Aluno aluno = alunoService.atualizarAluno(
+                id,
+                alunoAtualizado.nomeCompleto(),
+                alunoAtualizado.email(),
+                alunoAtualizado.cpf(),
+                alunoAtualizado.rgRne(),
+                alunoAtualizado.nacionalidade(),
+                alunoAtualizado.cep(),
+                alunoAtualizado.endereco(),
+                alunoAtualizado.dataNascimento(),
+                alunoAtualizado.responsavelFinanceiro(),
+                null
+        );
+        return ResponseEntity.ok(new AlunoDTO(
+                aluno.getId(),
+                aluno.getNomeCompleto(),
+                aluno.getEmail(),
+                aluno.getCpf(),
+                aluno.getRgRne(),
+                aluno.getNacionalidade(),
+                aluno.getCep(),
+                aluno.getEndereco(),
+                aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
+                aluno.isResponsavelFinanceiro()
+        ));
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarAluno(@PathVariable Long id) {
-        if (alunoRepository.existsById(id)) {
-            alunoRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        alunoService.deletarAluno(id);
+        return ResponseEntity.noContent().build();
     }
-
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleException(RuntimeException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-
 }
