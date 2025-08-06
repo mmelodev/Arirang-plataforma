@@ -1,31 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Home - AriranG</title>
-
-    <link rel="stylesheet" th:href="@{/css/home.css?v=1.0}">
-    <!--por alguma razao não estou conseguindo integrar com css externo-->
-
-    <style>
-
-    </style>
+    <link rel="stylesheet" th:href="@{/css/home.css?v=1.0}" />
 </head>
 <body>
-    <header>
-        <div>
-            <nav>
+<div class="slider-thumb"></div>
 
-            </nav>
+<header>
+    <div class="main-nav">
+        <div class="logo">
+            <a th:href="@{/}"><img th:src="@{/img/robot_1f916.png}" alt="Logo" /></a>
         </div>
-    </header>
+        <nav>
+            <ul class="nav-list">
+                <a th:href="@{/}"><li class="nav-element">Home</li></a>
+                <a th:href="@{/alunos/lista}"><li class="nav-element">Alunos</li></a>
+                <a th:href="@{/professores}"><li class="nav-element">Professores</li></a>
+                <a th:href="@{/turmas}"><li class="nav-element">Turmas</li></a>
+            </ul>
+        </nav>
+    </div>
+</header>
 
-    <main>
+<main>
+    <div class="main-content">
+        <a th:href="@{/alunos/lista}">
+            <div class="central">
+                <div class="card">
+                    <img th:src="@{/img/pexels-kobeboy-1516440.jpg}" alt="Alunos" />
+                    <div class="card-alunos-text">
+                        <h2>Alunos</h2>
+                        <p>Lista completa e cadastre novos alunos.</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a th:href="@{/professores}">
+            <div class="central">
+                <div class="card">
+                    <img th:src="@{/img/fran-innocenti-I_LxDFIIRIA-unsplash.jpg}" alt="Professores" />
+                    <div class="card-professores-text">
+                        <h2>Professores</h2>
+                        <p>Gerencie professores, como cadastro e disciplinas.</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a th:href="@{/turmas}">
+            <div class="central">
+                <div class="card">
+                    <img th:src="@{/img/sincerely-media-dGxOgeXAXm8-unsplash.jpg}" alt="Turmas" />
+                    <div class="card-turmas-text">
+                        <h2>Turmas</h2>
+                        <p>Gerencie as turmas, incluindo alunos matriculados.</p>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</main>
 
-    </main>
-
-    <footer>
-
-    </footer>
+<footer></footer>
 </body>
 </html>
