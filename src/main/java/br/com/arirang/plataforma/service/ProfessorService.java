@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,10 +17,16 @@ public class ProfessorService {
     private ProfessorRepository professorRepository;
 
     @Transactional
-    public Professor criarProfessor(String nome, String email) {
+    public Professor criarProfessor(String nomeCompleto, LocalDateTime dataNascimento, String rg, String cpf,
+                                    String telefone, String cargo, String formacao) {
         Professor professor = new Professor();
-        professor.setNome(nome);
-        professor.setEmail(email);
+        professor.setNomeCompleto(nomeCompleto);
+        professor.setDataNascimento(dataNascimento);
+        professor.setRg(rg);
+        professor.setCpf(cpf);
+        professor.setTelefone(telefone);
+        professor.setCargo(cargo);
+        professor.setFormacao(formacao);
         return professorRepository.save(professor);
     }
 
@@ -34,11 +41,17 @@ public class ProfessorService {
     }
 
     @Transactional
-    public Professor atualizarProfessor(Long id, String nome, String email) {
+    public Professor atualizarProfessor(Long id, String nomeCompleto, LocalDateTime dataNascimento, String rg,
+                                        String cpf, String telefone, String cargo, String formacao) {
         Professor professorExistente = professorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Professor não encontrado"));
-        professorExistente.setNome(nome);
-        professorExistente.setEmail(email);
+        professorExistente.setNomeCompleto(nomeCompleto);
+        professorExistente.setDataNascimento(dataNascimento);
+        professorExistente.setRg(rg);
+        professorExistente.setCpf(cpf);
+        professorExistente.setTelefone(telefone);
+        professorExistente.setCargo(cargo);
+        professorExistente.setFormacao(formacao);
         return professorRepository.save(professorExistente);
     }
 

@@ -21,11 +21,24 @@ public class ProfessorController {
 
     @PostMapping
     public ResponseEntity<ProfessorDTO> criarProfessor(@Valid @RequestBody ProfessorDTO novoProfessor) {
-        Professor professor = professorService.criarProfessor(novoProfessor.nome(), novoProfessor.email());
+        Professor professor = professorService.criarProfessor(
+                novoProfessor.nomeCompleto(),
+                novoProfessor.dataNascimento(),
+                novoProfessor.rg(),
+                novoProfessor.cpf(),
+                novoProfessor.telefone(),
+                novoProfessor.cargo(),
+                novoProfessor.formacao()
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(new ProfessorDTO(
                 professor.getId(),
-                professor.getNome(),
-                professor.getEmail()
+                professor.getNomeCompleto(),
+                professor.getDataNascimento(),
+                professor.getRg(),
+                professor.getCpf(),
+                professor.getTelefone(),
+                professor.getCargo(),
+                professor.getFormacao()
         ));
     }
 
@@ -33,8 +46,13 @@ public class ProfessorController {
     public ResponseEntity<List<ProfessorDTO>> listarTodosProfessores() {
         return ResponseEntity.ok(professorService.listarTodosProfessores().stream().map(professor -> new ProfessorDTO(
                 professor.getId(),
-                professor.getNome(),
-                professor.getEmail()
+                professor.getNomeCompleto(),
+                professor.getDataNascimento(),
+                professor.getRg(),
+                professor.getCpf(),
+                professor.getTelefone(),
+                professor.getCargo(),
+                professor.getFormacao()
         )).collect(Collectors.toList()));
     }
 
@@ -43,8 +61,13 @@ public class ProfessorController {
         return professorService.buscarProfessorPorId(id)
                 .map(professor -> new ProfessorDTO(
                         professor.getId(),
-                        professor.getNome(),
-                        professor.getEmail()
+                        professor.getNomeCompleto(),
+                        professor.getDataNascimento(),
+                        professor.getRg(),
+                        professor.getCpf(),
+                        professor.getTelefone(),
+                        professor.getCargo(),
+                        professor.getFormacao()
                 ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -52,11 +75,25 @@ public class ProfessorController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProfessorDTO> atualizarProfessor(@PathVariable Long id, @Valid @RequestBody ProfessorDTO professorAtualizado) {
-        Professor professor = professorService.atualizarProfessor(id, professorAtualizado.nome(), professorAtualizado.email());
+        Professor professor = professorService.atualizarProfessor(
+                id,
+                professorAtualizado.nomeCompleto(),
+                professorAtualizado.dataNascimento(),
+                professorAtualizado.rg(),
+                professorAtualizado.cpf(),
+                professorAtualizado.telefone(),
+                professorAtualizado.cargo(),
+                professorAtualizado.formacao()
+        );
         return ResponseEntity.ok(new ProfessorDTO(
                 professor.getId(),
-                professor.getNome(),
-                professor.getEmail()
+                professor.getNomeCompleto(),
+                professor.getDataNascimento(),
+                professor.getRg(),
+                professor.getCpf(),
+                professor.getTelefone(),
+                professor.getCargo(),
+                professor.getFormacao()
         ));
     }
 

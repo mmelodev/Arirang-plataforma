@@ -2,6 +2,8 @@ package br.com.arirang.plataforma.controller;
 
 import br.com.arirang.plataforma.dto.AlunoDTO;
 import br.com.arirang.plataforma.entity.Aluno;
+import br.com.arirang.plataforma.entity.Endereco;
+import br.com.arirang.plataforma.entity.Responsavel;
 import br.com.arirang.plataforma.service.AlunoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,8 @@ import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import br.com.arirang.plataforma.entity.Turma;
 
 @Controller // Mantido como @Controller para suportar Thymeleaf
 @RequestMapping("/alunos")
@@ -33,12 +37,21 @@ public class AlunoController {
                         aluno.getNomeCompleto(),
                         aluno.getEmail(),
                         aluno.getCpf(),
-                        aluno.getRgRne(),
+                        aluno.getRg(),
+                        aluno.getOrgaoExpeditorRg(),
                         aluno.getNacionalidade(),
-                        aluno.getCep(),
-                        aluno.getEndereco(),
+                        aluno.getUf(),
+                        aluno.getTelefone(),
                         aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
-                        aluno.isResponsavelFinanceiro()
+                        aluno.getNomeSocial(),
+                        aluno.getGenero(),
+                        aluno.getSituacao(),
+                        aluno.getUltimoNivel(),
+                        aluno.getEndereco(),
+                        aluno.getResponsavel(),
+                        aluno.getGrauParentesco(),
+                        aluno.isResponsavelFinanceiro(),
+                        aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
                 )).collect(Collectors.toList());
         return ResponseEntity.ok(alunos);
     }
@@ -51,12 +64,21 @@ public class AlunoController {
                         aluno.getNomeCompleto(),
                         aluno.getEmail(),
                         aluno.getCpf(),
-                        aluno.getRgRne(),
+                        aluno.getRg(),
+                        aluno.getOrgaoExpeditorRg(),
                         aluno.getNacionalidade(),
-                        aluno.getCep(),
-                        aluno.getEndereco(),
+                        aluno.getUf(),
+                        aluno.getTelefone(),
                         aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
-                        aluno.isResponsavelFinanceiro()
+                        aluno.getNomeSocial(),
+                        aluno.getGenero(),
+                        aluno.getSituacao(),
+                        aluno.getUltimoNivel(),
+                        aluno.getEndereco(),
+                        aluno.getResponsavel(),
+                        aluno.getGrauParentesco(),
+                        aluno.isResponsavelFinanceiro(),
+                        aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
                 )).collect(Collectors.toList()));
         return "alunos"; // Template Thymeleaf
     }
@@ -69,12 +91,21 @@ public class AlunoController {
                         aluno.getNomeCompleto(),
                         aluno.getEmail(),
                         aluno.getCpf(),
-                        aluno.getRgRne(),
+                        aluno.getRg(),
+                        aluno.getOrgaoExpeditorRg(),
                         aluno.getNacionalidade(),
-                        aluno.getCep(),
-                        aluno.getEndereco(),
+                        aluno.getUf(),
+                        aluno.getTelefone(),
                         aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
-                        aluno.isResponsavelFinanceiro()
+                        aluno.getNomeSocial(),
+                        aluno.getGenero(),
+                        aluno.getSituacao(),
+                        aluno.getUltimoNivel(),
+                        aluno.getEndereco(),
+                        aluno.getResponsavel(),
+                        aluno.getGrauParentesco(),
+                        aluno.isResponsavelFinanceiro(),
+                        aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
                 ))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -86,25 +117,42 @@ public class AlunoController {
                 novoAluno.nomeCompleto(),
                 novoAluno.email(),
                 novoAluno.cpf(),
-                novoAluno.rgRne(),
+                novoAluno.rg(),
+                novoAluno.orgaoExpeditorRg(),
                 novoAluno.nacionalidade(),
-                novoAluno.cep(),
-                novoAluno.endereco(),
+                novoAluno.uf(),
+                novoAluno.telefone(),
                 novoAluno.dataNascimento(),
+                novoAluno.nomeSocial(),
+                novoAluno.genero(),
+                novoAluno.situacao(),
+                novoAluno.ultimoNivel(),
+                novoAluno.endereco(),
+                novoAluno.responsavel(),
+                novoAluno.grauParentesco(),
                 novoAluno.responsavelFinanceiro(),
-                null
+                novoAluno.turmaIds()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(new AlunoDTO(
                 aluno.getId(),
                 aluno.getNomeCompleto(),
                 aluno.getEmail(),
                 aluno.getCpf(),
-                aluno.getRgRne(),
+                aluno.getRg(),
+                aluno.getOrgaoExpeditorRg(),
                 aluno.getNacionalidade(),
-                aluno.getCep(),
-                aluno.getEndereco(),
+                aluno.getUf(),
+                aluno.getTelefone(),
                 aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
-                aluno.isResponsavelFinanceiro()
+                aluno.getNomeSocial(),
+                aluno.getGenero(),
+                aluno.getSituacao(),
+                aluno.getUltimoNivel(),
+                aluno.getEndereco(),
+                aluno.getResponsavel(),
+                aluno.getGrauParentesco(),
+                aluno.isResponsavelFinanceiro(),
+                aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
         ));
     }
 
@@ -115,25 +163,42 @@ public class AlunoController {
                 alunoAtualizado.nomeCompleto(),
                 alunoAtualizado.email(),
                 alunoAtualizado.cpf(),
-                alunoAtualizado.rgRne(),
+                alunoAtualizado.rg(),
+                alunoAtualizado.orgaoExpeditorRg(),
                 alunoAtualizado.nacionalidade(),
-                alunoAtualizado.cep(),
-                alunoAtualizado.endereco(),
+                alunoAtualizado.uf(),
+                alunoAtualizado.telefone(),
                 alunoAtualizado.dataNascimento(),
+                alunoAtualizado.nomeSocial(),
+                alunoAtualizado.genero(),
+                alunoAtualizado.situacao(),
+                alunoAtualizado.ultimoNivel(),
+                alunoAtualizado.endereco(),
+                alunoAtualizado.responsavel(),
+                alunoAtualizado.grauParentesco(),
                 alunoAtualizado.responsavelFinanceiro(),
-                null
+                alunoAtualizado.turmaIds()
         );
         return ResponseEntity.ok(new AlunoDTO(
                 aluno.getId(),
                 aluno.getNomeCompleto(),
                 aluno.getEmail(),
                 aluno.getCpf(),
-                aluno.getRgRne(),
+                aluno.getRg(),
+                aluno.getOrgaoExpeditorRg(),
                 aluno.getNacionalidade(),
-                aluno.getCep(),
-                aluno.getEndereco(),
+                aluno.getUf(),
+                aluno.getTelefone(),
                 aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
-                aluno.isResponsavelFinanceiro()
+                aluno.getNomeSocial(),
+                aluno.getGenero(),
+                aluno.getSituacao(),
+                aluno.getUltimoNivel(),
+                aluno.getEndereco(),
+                aluno.getResponsavel(),
+                aluno.getGrauParentesco(),
+                aluno.isResponsavelFinanceiro(),
+                aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
         ));
     }
 

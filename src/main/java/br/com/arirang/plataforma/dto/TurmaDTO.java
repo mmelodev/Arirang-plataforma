@@ -1,13 +1,27 @@
 package br.com.arirang.plataforma.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import br.com.arirang.plataforma.entity.Aluno;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record TurmaDTO(
-        @NotNull(message = "ID não pode ser nulo para atualizações")
         Long id,
-        @NotBlank(message = "Nome é obrigatório")
-        String nome,
-        Long professorId, // Opcional, então sem @NotNull
-        List<AlunoDTO> alunos) {}
+        String nomeTurma,
+        Long professorResponsavelId,
+        String nivelProficiencia,
+        String diaTurma,
+        String turno,
+        String formato,
+        String modalidade,
+        String realizador,
+        LocalDateTime horaInicio,
+        LocalDateTime horaTermino,
+        String anoSemestre,
+        Integer cargaHorariaTotal,
+        LocalDateTime inicioTurma,
+        LocalDateTime terminoTurma,
+        String situacaoTurma,
+        LocalDateTime ultimaModificacao,
+        List<Long> alunoIds
+) {}
