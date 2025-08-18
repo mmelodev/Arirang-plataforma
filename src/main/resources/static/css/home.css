@@ -1,8 +1,12 @@
+/* Tags principais: */
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    height: 100vh;
+}
+
+body {
+    height: 100lvh;
     background: linear-gradient(90deg, #01004e, #860213);
 }
 
@@ -22,7 +26,8 @@ body {
     -webkit-animation: sliderShape 10s linear infinite;
 }
 @keyframes sliderShape {
-    0%, 100% {
+    0%,
+    100% {
         border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
         transform: translate3d(0, 0, 0) rotateZ(0.01deg);
     }
@@ -40,6 +45,7 @@ body {
 }
 
 .main-nav {
+    justify-items: flex-start;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -48,6 +54,9 @@ body {
     margin: 10px 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 2rem;
+}
+
+.logo {
 }
 
 .logo img {
@@ -61,6 +70,7 @@ body {
     align-items: center;
     flex-wrap: wrap;
     padding: 20px;
+    justify-items: center;
 }
 
 .main-content a {
@@ -87,6 +97,7 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative;
     transition: box-shadow 0.3s, transform 0.3s;
+    /* Remover display: inline-block e vertical-align: top */
 }
 
 .card:hover {
@@ -108,8 +119,39 @@ body {
     opacity: 1;
 }
 
-.card-alunos-text,
-.card-professores-text,
+.card:hover {
+}
+
+.card-alunos-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    padding-right: 2rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: aliceblue;
+    z-index: 1;
+    opacity: 1;
+}
+
+.card-professores-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    padding-right: 2rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: aliceblue;
+    z-index: 1;
+    opacity: 1;
+}
+
 .card-turmas-text {
     display: flex;
     flex-direction: column;
@@ -124,6 +166,8 @@ body {
     z-index: 1;
     opacity: 1;
 }
+
+/* Tags isoladas: */
 
 ul {
     padding: 0;
@@ -148,7 +192,9 @@ a {
     padding: 0;
 }
 
-h1, h2, p {
+h1,
+h2,
+p {
     margin: 0;
     padding: 0;
 }

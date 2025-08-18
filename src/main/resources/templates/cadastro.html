@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cadastro - AriranG</title>
+    <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+
+    <!-- Fallback inline CSS caso o externo falhe -->
+    <style th:inline="none">
+        body { background: #01004e; }
+        .main-nav { background-color: #1a1a1a; }
+    </style>
+</head>
+<body>
+<div class="slider-thumb"></div>
+
+<header>
+    <div class="main-nav">
+        <div class="logo">
+            <a th:href="@{/}"><img th:src="@{/media/img/robot_1f916.png}" alt="Logo" /></a>
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li th:class="nav-element"><a th:href="@{/}">Home</a></li>
+                <li th:class="nav-element"><a th:href="@{/alunos/lista}">Alunos</a></li>
+                <li th:class="nav-element"><a th:href="@{/turmas}">Turmas</a></li>
+                <li th:class="nav-element"><a th:href="@{/funcionarios}">Funcionários</a></li>
+                <li th:class="nav-element" class="active"><a th:href="@{/cadastro}">Cadastro</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="alunos-header">
+        <h1>Cadastro Geral</h1>
+        <div class="top-actions">
+            <input type="text" placeholder="Pesquisar..." class="search-bar" th:id="'searchBar'" />
+            <button class="btn pesquisar">Pesquisar</button>
+            <div class="cadastrar-options">
+                <a th:href="@{/alunos/novo}" class="btn cadastrar">+ Cadastrar Aluno</a>
+                <a th:href="@{/professores/novo}" class="btn cadastrar">+ Cadastrar Professor</a>
+                <a th:href="@{/turmas/novo}" class="btn cadastrar">+ Cadastrar Turma</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="tabela-container">
+        <table>
+            <thead>
+            <tr>
+                <th>Tipo</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cadastros}">
+                <td th:text="${item.tipo}"></td>
+                <td th:text="${item.nome}"></td>
+                <td th:text="${item.email}"></td>
+                <td th:text="${item.telefone}"></td>
+                <td class="acoes">
+                    <a th:href="@{'/alunos/editar/' + ${item.id}}" th:if="${item.tipo == 'Aluno'}" class="btn editar">Editar</a>
+                    <a th:href="@{'/professores/editar/' + ${item.id}}" th:if="${item.tipo == 'Professor'}" class="btn editar">Editar</a>
+                    <a th:href="@{'/turmas/editar/' + ${item.id}}" th:if="${item.tipo == 'Turma'}" class="btn editar">Editar</a>
+                    <a th:href="@{'/alunos/deletar/' + ${item.id}}" th:if="${item.tipo == 'Aluno'}" class="btn deletar">Deletar</a>
+                    <a th:href="@{'/professores/deletar/' + ${item.id}}" th:if="${item.tipo == 'Professor'}" class="btn deletar">Deletar</a>
+                    <a th:href="@{'/turmas/deletar/' + ${item.id}}" th:if="${item.tipo == 'Turma'}" class="btn deletar">Deletar</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer></footer>
+</body>
+</html>

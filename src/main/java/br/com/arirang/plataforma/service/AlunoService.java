@@ -1,5 +1,6 @@
 package br.com.arirang.plataforma.service;
 
+import br.com.arirang.plataforma.dto.AlunoDTO;
 import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.entity.Endereco;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import br.com.arirang.plataforma.entity.Endereco;
 import br.com.arirang.plataforma.entity.Responsavel;
@@ -28,59 +30,9 @@ public class AlunoService {
     private TurmaRepository turmaRepository;
 
     @Transactional
-    public Aluno criarAluno(String nomeCompleto, String email, String cpf, String rg, String orgaoExpeditorRg,
-                            String nacionalidade, String uf, String telefone, String dataNascimentoStr,
-                            String nomeSocial, String genero, String situacao, String ultimoNivel,
-                            Endereco endereco, Responsavel responsavel, String grauParentesco,
-                            boolean responsavelFinanceiro, List<Long> turmaIds) {
+    public Aluno criarAluno(AlunoDTO alunoDTO) {
         Aluno aluno = new Aluno();
-        aluno.setNomeCompleto(nomeCompleto);
-        aluno.setEmail(email);
-        aluno.setCpf(cpf);
-        aluno.setRg(rg);
-        aluno.setOrgaoExpeditorRg(orgaoExpeditorRg);
-        aluno.setNacionalidade(nacionalidade);
-        aluno.setUf(uf);
-        aluno.setTelefone(telefone);
-        aluno.setNomeSocial(nomeSocial);
-        aluno.setGenero(genero);
-        aluno.setSituacao(situacao);
-        aluno.setUltimoNivel(ultimoNivel);
-        aluno.setEndereco(endereco);
-        aluno.setResponsavelFinanceiro(responsavelFinanceiro);
-
-        // Parse da data de nascimento
-        if (dataNascimentoStr != null && !dataNascimentoStr.isEmpty()) {
-            try {
-                LocalDateTime dataNascimento = LocalDateTime.parse(dataNascimentoStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                aluno.setDataNascimento(dataNascimento);
-
-                // Lógica para menores de 18 anos
-                int idade = LocalDateTime.now().getYear() - dataNascimento.getYear();
-                if (idade < 18 && (responsavel == null || grauParentesco == null)) {
-                    throw new IllegalArgumentException("Responsável e grau de parentesco são obrigatórios para menores de 18 anos.");
-                }
-                if (idade < 18) {
-                    aluno.setResponsavel(responsavel);
-                    aluno.setGrauParentesco(grauParentesco);
-                }
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Formato de data de nascimento inválido. Use ISO_LOCAL_DATE_TIME (ex.: 2025-08-13T11:13:00).");
-            }
-        }
-
-        // Vinculação com turmas
-        if (turmaIds != null && !turmaIds.isEmpty()) {
-            List<Turma> turmas = turmaRepository.findAllById(turmaIds)
-                    .stream()
-                    .filter(t -> t != null)
-                    .toList();
-            if (turmas.size() != turmaIds.size()) {
-                throw new RuntimeException("Uma ou mais turmas não foram encontradas.");
-            }
-            aluno.setTurmas(turmas);
-        }
-
+        mapDtoToEntity(alunoDTO, aluno);
         return alunoRepository.save(aluno);
     }
 
@@ -95,63 +47,44 @@ public class AlunoService {
     }
 
     @Transactional
-    public Aluno atualizarAluno(Long id, String nomeCompleto, String email, String cpf, String rg, String orgaoExpeditorRg,
-                                String nacionalidade, String uf, String telefone, String dataNascimentoStr,
-                                String nomeSocial, String genero, String situacao, String ultimoNivel,
-                                Endereco endereco, Responsavel responsavel, String grauParentesco,
-                                boolean responsavelFinanceiro, List<Long> turmaIds) {
+    public Aluno atualizarAluno(Long id, AlunoDTO alunoDTO) {
         Aluno alunoExistente = alunoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-        alunoExistente.setNomeCompleto(nomeCompleto);
-        alunoExistente.setEmail(email);
-        alunoExistente.setCpf(cpf);
-        alunoExistente.setRg(rg);
-        alunoExistente.setOrgaoExpeditorRg(orgaoExpeditorRg);
-        alunoExistente.setNacionalidade(nacionalidade);
-        alunoExistente.setUf(uf);
-        alunoExistente.setTelefone(telefone);
-        alunoExistente.setNomeSocial(nomeSocial);
-        alunoExistente.setGenero(genero);
-        alunoExistente.setSituacao(situacao);
-        alunoExistente.setUltimoNivel(ultimoNivel);
-        alunoExistente.setEndereco(endereco);
-        alunoExistente.setResponsavelFinanceiro(responsavelFinanceiro);
+        mapDtoToEntity(alunoDTO, alunoExistente);
+        return alunoRepository.save(alunoExistente);
+    }
 
-        // Parse da data de nascimento e lógica de responsável
-        if (dataNascimentoStr != null && !dataNascimentoStr.isEmpty()) {
-            try {
-                LocalDateTime dataNascimento = LocalDateTime.parse(dataNascimentoStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-                alunoExistente.setDataNascimento(dataNascimento);
-
-                int idade = LocalDateTime.now().getYear() - dataNascimento.getYear();
-                if (idade < 18 && (responsavel == null || grauParentesco == null)) {
-                    throw new IllegalArgumentException("Responsável e grau de parentesco são obrigatórios para menores de 18 anos.");
-                }
-                if (idade < 18) {
-                    alunoExistente.setResponsavel(responsavel);
-                    alunoExistente.setGrauParentesco(grauParentesco);
-                } else {
-                    alunoExistente.setResponsavel(null); // Limpar responsável se maior de 18
-                    alunoExistente.setGrauParentesco(null);
-                }
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Formato de data de nascimento inválido. Use ISO_LOCAL_DATE_TIME (ex.: 2025-08-13T11:13:00).");
-            }
+    private void mapDtoToEntity(AlunoDTO dto, Aluno aluno) {
+        aluno.setNomeCompleto(dto.nomeCompleto());
+        aluno.setEmail(dto.email());
+        aluno.setCpf(dto.cpf());
+        aluno.setRg(dto.rg());
+        aluno.setOrgaoExpeditorRg(dto.orgaoExpeditorRg());
+        aluno.setNacionalidade(dto.nacionalidade());
+        aluno.setUf(dto.uf());
+        aluno.setTelefone(dto.telefone());
+        if (dto.dataNascimento() != null) {
+            aluno.setDataNascimento(LocalDateTime.parse(dto.dataNascimento(), DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
+        aluno.setNomeSocial(dto.nomeSocial());
+        aluno.setGenero(dto.genero());
+        aluno.setSituacao(dto.situacao());
+        aluno.setUltimoNivel(dto.ultimoNivel());
+        aluno.setEndereco(dto.endereco());
+        aluno.setResponsavel(dto.responsavel());
+        aluno.setGrauParentesco(dto.grauParentesco());
+        aluno.setResponsavelFinanceiro(dto.responsavelFinanceiro());
 
-        // Vinculação com turmas
-        if (turmaIds != null && !turmaIds.isEmpty()) {
-            List<Turma> turmas = turmaRepository.findAllById(turmaIds)
+        if (dto.turmaIds() != null && !dto.turmaIds().isEmpty()) {
+            List<Turma> turmas = turmaRepository.findAllById(dto.turmaIds())
                     .stream()
                     .filter(t -> t != null)
-                    .toList();
-            if (turmas.size() != turmaIds.size()) {
+                    .collect(Collectors.toList());
+            if (turmas.size() != dto.turmaIds().size()) {
                 throw new RuntimeException("Uma ou mais turmas não foram encontradas.");
             }
-            alunoExistente.setTurmas(turmas);
+            aluno.setTurmas(turmas);
         }
-
-        return alunoRepository.save(alunoExistente);
     }
 
     @Transactional

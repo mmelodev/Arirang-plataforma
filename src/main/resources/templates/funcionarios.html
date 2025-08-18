@@ -2,8 +2,9 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Home - AriranG</title>
+    <title>Funcionários - AriranG</title>
     <link rel="stylesheet" th:href="@{/css/home.css?v=1.0}" />
+
 </head>
 <body>
 <div class="slider-thumb"></div>
@@ -26,46 +27,35 @@
 
 <main>
     <div class="main-content">
-        <a th:href="@{/alunos/lista}">
-            <div class="central">
-                <div class="card">
-                    <img th:src="@{/img/pexels-kobeboy-1516440.jpg}" alt="" />
-                    <div class="card-alunos-text">
-                        <h2>Alunos</h2>
-                        <p>Lista completa e cadastre novos alunos.</p>
-                    </div>
-                </div>
-            </div>
-        </a>
-        <a th:href="@{/funcionarios}">
+        <a th:href="@{/professores}">
             <div class="central">
                 <div class="card">
                     <img th:src="@{/img/fran-innocenti-I_LxDFIIRIA-unsplash.jpg}" alt="" />
                     <div class="card-professores-text">
-                        <h2>Funcionários</h2>
-                        <p>Gerencie professores e outros colaboradores.</p>
+                        <h2>Professores</h2>
+                        <p>Gerencie cadastro de professores, turmas e alunos.</p>
                     </div>
                 </div>
             </div>
         </a>
-        <a th:href="@{/turmas}">
+        <a th:href="@{/recepcao}">
             <div class="central">
-                <div class="card">
-                    <img th:src="@{/img/sincerely-media-dGxOgeXAXm8-unsplash.jpg}" alt="" />
+                <div class="card block">
+                    <img th:src="@{/img/pexels-helenalopes-3215519.jpg}" alt="" />
                     <div class="card-turmas-text">
-                        <h2>Turmas</h2>
-                        <p>Gerencie as turmas, incluindo alunos matriculados.</p>
+                        <h2>Recepção</h2>
+                        <p>Gerencie colabodores da Recepção</p>
                     </div>
                 </div>
             </div>
         </a>
-        <a th:href="@{/cadastro}">
-            <div class="central">
+        <a th:href="@{/limpeza}">
+            <div class="central block">
                 <div class="card">
-                    <img th:src="@{/img/pexels-kampus-8441817.jpg}" alt="" />
+                    <img th:src="@{/img/pexels-pixabay-48889.jpg}" alt="" />
                     <div class="card-turmas-text">
-                        <h2>Cadastro</h2>
-                        <p>Adicione, modifique e delete integrantes do sistema.</p>
+                        <h2>Limpeza</h2>
+                        <p>Gerencie os colaboradores responsáveis pela limpeza</p>
                     </div>
                 </div>
             </div>
