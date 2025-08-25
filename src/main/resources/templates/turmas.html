@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Turmas - AriranG</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+</head>
+<body>
+<header>
+    <div class="main-nav">
+        <div class="logo">
+            <a th:href="@{/}"><img th:src="@{/media/img/robot_1f916.png}" alt="Logo" /></a>
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li class="nav-element"><a th:href="@{/}">Home</a></li>
+                <li class="nav-element"><a th:href="@{/alunos/lista}">Alunos</a></li>
+                <li class="nav-element active"><a th:href="@{/turmas}">Turmas</a></li>
+                <li class="nav-element"><a th:href="@{/funcionarios}">Funcionários</a></li>
+                <li class="nav-element"><a th:href="@{/cadastro}">Cadastro</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="turmas-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <h1>Lista de Turmas</h1>
+        <div class="top-actions">
+            <input type="text" placeholder="Pesquisar..." class="search-bar" th:id="'searchBar'" />
+            <button class="btn pesquisar">Pesquisar</button>
+            <a th:href="@{/turmas/novo}" class="btn cadastrar">+ Cadastrar Turma</a>
+        </div>
+    </section>
+
+    <section class="tabela-container">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Professor Responsável</th>
+                <th>Nível de Proficiência</th>
+                <th>Ações</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="turma : ${turmas}">
+                <td th:text="${turma.id}">ID</td>
+                <td th:text="${turma.nomeTurma}">Nome</td>
+                <td th:text="${turma.professorResponsavelId}">Professor</td>
+                <td th:text="${turma.nivelProficiencia}">Nível</td>
+                <td class="acoes">
+                    <a th:href="@{/turmas/editar/{id}(id=${turma.id})}" class="btn editar">Editar</a>
+                    <a th:href="@{/turmas/deletar/{id}(id=${turma.id})}" class="btn deletar">Deletar</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer></footer>
+</body>
+</html>

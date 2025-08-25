@@ -18,6 +18,7 @@ public abstract class Funcionario {
     private String cpf;
     private String telefone;
     private String cargo;
+    private String email;
 
     // Getters e Setters
     public Long getId() { return id; }

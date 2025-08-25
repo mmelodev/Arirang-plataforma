@@ -3,7 +3,6 @@ package br.com.arirang.plataforma.dto;
 import br.com.arirang.plataforma.entity.Endereco;
 import br.com.arirang.plataforma.entity.Responsavel;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record AlunoDTO(
@@ -22,7 +21,7 @@ public record AlunoDTO(
 		String situacao,
 		String ultimoNivel,
 		Endereco endereco,
-		Responsavel responsavel,
+		Long responsavelId, // Usando Long em vez de Responsavel
 		String grauParentesco,
 		boolean responsavelFinanceiro,
 		List<Long> turmaIds

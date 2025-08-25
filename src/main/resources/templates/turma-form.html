@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Formulário de Turma - AriranG</title>
+    <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+</head>
+<body>
+<h1>Formulário de Turma</h1>
+<form th:action="@{/turmas}" th:object="${turma}" method="post">
+    <label>Nome da Turma: <input type="text" th:field="*{nomeTurma}" /></label><br/>
+    <label>Professor Responsável ID: <input type="number" th:field="*{professorResponsavelId}" /></label><br/>
+    <label>Nível de Proficiência: <input type="text" th:field="*{nivelProficiencia}" /></label><br/>
+    <label>Dia da Turma: <input type="text" th:field="*{diaTurma}" /></label><br/>
+    <label>Turno: <input type="text" th:field="*{turno}" /></label><br/>
+    <label>Formato: <input type="text" th:field="*{formato}" /></label><br/>
+    <label>Modalidade: <input type="text" th:field="*{modalidade}" /></label><br/>
+    <label>Realizador: <input type="text" th:field="*{realizador}" /></label><br/>
+    <label>Hora Início: <input type="time" th:field="*{horaInicio}" /></label><br/>
+    <label>Hora Término: <input type="time" th:field="*{horaTermino}" /></label><br/>
+    <label>Ano/Semestre: <input type="text" th:field="*{anoSemestre}" /></label><br/>
+    <label>Carga Horária Total: <input type="number" th:field="*{cargaHorariaTotal}" /></label><br/>
+    <label>Início da Turma: <input type="date" th:field="*{inicioTurma}" /></label><br/>
+    <label>Término da Turma: <input type="date" th:field="*{terminoTurma}" /></label><br/>
+    <label>Situação da Turma: <input type="text" th

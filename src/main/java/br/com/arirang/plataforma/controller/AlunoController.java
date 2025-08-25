@@ -4,6 +4,8 @@ import br.com.arirang.plataforma.dto.AlunoDTO;
 import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.service.AlunoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/alunos")
 public class AlunoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AlunoController.class);
 
     @Autowired
     private AlunoService alunoService;
@@ -43,7 +47,7 @@ public class AlunoController {
                 aluno.getSituacao(),
                 aluno.getUltimoNivel(),
                 aluno.getEndereco(),
-                aluno.getResponsavel(),
+                aluno.getResponsavel() != null ? aluno.getResponsavel().getId() : null, // Ajuste para Long
                 aluno.getGrauParentesco(),
                 aluno.isResponsavelFinanceiro(),
                 aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
@@ -56,11 +60,17 @@ public class AlunoController {
             List<AlunoDTO> alunos = alunoService.listarTodosAlunos().stream()
                     .map(this::convertToDTO)
                     .collect(Collectors.toList());
-            model.addAttribute("alunos", alunos);
-            return "alunos"; // Retorna o template alunos.html
+            if (alunos.isEmpty()) {
+                logger.warn("Nenhum aluno encontrado no banco de dados.");
+                model.addAttribute("error", "Nenhum aluno cadastrado.");
+            } else {
+                model.addAttribute("alunos", alunos);
+            }
+            return "alunos";
         } catch (Exception e) {
+            logger.error("Erro ao carregar os alunos: ", e);
             model.addAttribute("error", "Erro ao carregar os alunos: " + e.getMessage());
-            return "error"; // Retorna uma página de erro personalizada (a criar, se necessário)
+            return "error";
         }
     }
 
@@ -82,52 +92,91 @@ public class AlunoController {
 
     @GetMapping("/novo")
     public String novoAlunoForm(Model model) {
-        model.addAttribute("aluno", new AlunoDTO(null, "", "", "", "", "", "", "", "", "", "", "", "", null, null, null, "", false, null));
-        return "aluno-form"; // Template para formulário de cadastro (a criar)
+        try {
+            model.addAttribute("aluno", new AlunoDTO(null, "", "", "", "", "", "", "", "", "", "", "", "", null, null, null, "", false, null));
+            return "aluno-form";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar formulário de novo aluno: ", e);
+            model.addAttribute("error", "Erro ao carregar o formulário: " + e.getMessage());
+            return "error";
+        }
     }
 
     @PostMapping
     public ResponseEntity<AlunoDTO> criarAluno(@Valid @RequestBody AlunoDTO novoAluno) {
-        Aluno aluno = alunoService.criarAluno(novoAluno);
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(aluno));
+        try {
+            Aluno aluno = alunoService.criarAluno(novoAluno);
+            return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(aluno));
+        } catch (Exception e) {
+            logger.error("Erro ao criar aluno: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/editar/{id}")
     public String editarAlunoForm(@PathVariable Long id, Model model) {
-        AlunoDTO aluno = alunoService.buscarAlunoPorId(id)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-        model.addAttribute("aluno", aluno);
-        return "aluno-form"; // Template para formulário de edição
+        try {
+            AlunoDTO aluno = alunoService.buscarAlunoPorId(id)
+                    .map(this::convertToDTO)
+                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+            model.addAttribute("aluno", aluno);
+            return "aluno-form";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar formulário de edição para ID {}: ", id, e);
+            model.addAttribute("error", "Erro ao carregar o formulário: " + e.getMessage());
+            return "error";
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AlunoDTO> atualizarAluno(@PathVariable Long id, @Valid @RequestBody AlunoDTO alunoAtualizado) {
-        Aluno aluno = alunoService.atualizarAluno(id, alunoAtualizado);
-        return ResponseEntity.ok(convertToDTO(aluno));
+        try {
+            Aluno aluno = alunoService.atualizarAluno(id, alunoAtualizado);
+            return ResponseEntity.ok(convertToDTO(aluno));
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar aluno com ID {}: ", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/deletar/{id}")
     public String deletarAlunoConfirm(@PathVariable Long id, Model model) {
-        AlunoDTO aluno = alunoService.buscarAlunoPorId(id)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-        model.addAttribute("aluno", aluno);
-        return "aluno-delete"; // Template para confirmação de exclusão
+        try {
+            AlunoDTO aluno = alunoService.buscarAlunoPorId(id)
+                    .map(this::convertToDTO)
+                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+            model.addAttribute("aluno", aluno);
+            return "aluno-delete";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar confirmação de deleção para ID {}: ", id, e);
+            model.addAttribute("error", "Erro ao carregar a confirmação: " + e.getMessage());
+            return "error";
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarAluno(@PathVariable Long id) {
-        alunoService.deletarAluno(id);
-        return ResponseEntity.noContent().build();
+        try {
+            alunoService.deletarAluno(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            logger.error("Erro ao deletar aluno com ID {}: ", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/turma/{id}")
     public String associarTurma(@PathVariable Long id, Model model) {
-        AlunoDTO aluno = alunoService.buscarAlunoPorId(id)
-                .map(this::convertToDTO)
-                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-        model.addAttribute("aluno", aluno);
-        return "aluno-turma"; // Template para associação de turma
+        try {
+            AlunoDTO aluno = alunoService.buscarAlunoPorId(id)
+                    .map(this::convertToDTO)
+                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
+            model.addAttribute("aluno", aluno);
+            return "aluno-turma";
+        } catch (Exception e) {
+            logger.error("Erro ao carregar associação de turma para ID {}: ", id, e);
+            model.addAttribute("error", "Erro ao carregar a associação: " + e.getMessage());
+            return "error";
+        }
     }
 }

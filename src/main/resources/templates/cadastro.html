@@ -21,11 +21,11 @@
         </div>
         <nav>
             <ul class="nav-list">
-                <li th:class="nav-element"><a th:href="@{/}">Home</a></li>
-                <li th:class="nav-element"><a th:href="@{/alunos/lista}">Alunos</a></li>
-                <li th:class="nav-element"><a th:href="@{/turmas}">Turmas</a></li>
-                <li th:class="nav-element"><a th:href="@{/funcionarios}">Funcionários</a></li>
-                <li th:class="nav-element" class="active"><a th:href="@{/cadastro}">Cadastro</a></li>
+                <li class="nav-element"><a th:href="@{/}">Home</a></li>
+                <li class="nav-element"><a th:href="@{/alunos/lista}">Alunos</a></li>
+                <li class="nav-element"><a th:href="@{/turmas}">Turmas</a></li>
+                <li class="nav-element"><a th:href="@{/funcionarios}">Funcionários</a></li>
+                <li class="nav-element active"><a th:href="@{/cadastro}">Cadastro</a></li>
             </ul>
         </nav>
     </div>
@@ -63,12 +63,12 @@
                 <td th:text="${item.email}"></td>
                 <td th:text="${item.telefone}"></td>
                 <td class="acoes">
-                    <a th:href="@{'/alunos/editar/' + ${item.id}}" th:if="${item.tipo == 'Aluno'}" class="btn editar">Editar</a>
-                    <a th:href="@{'/professores/editar/' + ${item.id}}" th:if="${item.tipo == 'Professor'}" class="btn editar">Editar</a>
-                    <a th:href="@{'/turmas/editar/' + ${item.id}}" th:if="${item.tipo == 'Turma'}" class="btn editar">Editar</a>
-                    <a th:href="@{'/alunos/deletar/' + ${item.id}}" th:if="${item.tipo == 'Aluno'}" class="btn deletar">Deletar</a>
-                    <a th:href="@{'/professores/deletar/' + ${item.id}}" th:if="${item.tipo == 'Professor'}" class="btn deletar">Deletar</a>
-                    <a th:href="@{'/turmas/deletar/' + ${item.id}}" th:if="${item.tipo == 'Turma'}" class="btn deletar">Deletar</a>
+                    <a th:href="@{/alunos/editar/{id}(id=${item.id})}" th:if="${item.tipo == 'Aluno'}" class="btn editar">Editar</a>
+                    <a th:href="@{/professores/editar/{id}(id=${item.id})}" th:if="${item.tipo == 'Professor'}" class="btn editar">Editar</a>
+                    <a th:href="@{/turmas/editar/{id}(id=${item.id})}" th:if="${item.tipo == 'Turma'}" class="btn editar">Editar</a>
+                    <a th:href="@{/alunos/deletar/{id}(id=${item.id})}" th:if="${item.tipo == 'Aluno'}" class="btn deletar">Deletar</a>
+                    <a th:href="@{/professores/deletar/{id}(id=${item.id})}" th:if="${item.tipo == 'Professor'}" class="btn deletar">Deletar</a>
+                    <a th:href="@{/turmas/deletar/{id}(id=${item.id})}" th:if="${item.tipo == 'Turma'}" class="btn deletar">Deletar</a>
                 </td>
             </tr>
             </tbody>

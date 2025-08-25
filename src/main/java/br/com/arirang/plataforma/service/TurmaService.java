@@ -1,10 +1,11 @@
 package br.com.arirang.plataforma.service;
 
-import br.com.arirang.plataforma.entity.Turma;
+import br.com.arirang.plataforma.dto.TurmaDTO;
 import br.com.arirang.plataforma.entity.Professor;
-import br.com.arirang.plataforma.entity.Aluno;
+import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.repository.TurmaRepository;
-import br.com.arirang.plataforma.repository.AlunoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,120 +18,138 @@ import java.util.stream.Collectors;
 @Service
 public class TurmaService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TurmaService.class);
+
     @Autowired
     private TurmaRepository turmaRepository;
 
-    @Autowired
-    private AlunoRepository alunoRepository;
-
     @Transactional
-    public Turma criarTurma(String nomeTurma, Professor professorResponsavel, String nivelProficiencia,
-                            String diaTurma, String turno, String formato, String modalidade, String realizador,
-                            LocalDateTime horaInicio, LocalDateTime horaTermino, String anoSemestre,
-                            Integer cargaHorariaTotal, LocalDateTime inicioTurma, LocalDateTime terminoTurma,
-                            String situacaoTurma, List<Long> alunoIds) {
-        Turma turma = new Turma();
-        turma.setNomeTurma(nomeTurma);
-        turma.setProfessorResponsavel(professorResponsavel);
-        turma.setNivelProficiencia(nivelProficiencia);
-        turma.setDiaTurma(diaTurma);
-        turma.setTurno(turno);
-        turma.setFormato(formato);
-        turma.setModalidade(modalidade);
-        turma.setRealizador(realizador);
-        turma.setHoraInicio(horaInicio);
-        turma.setHoraTermino(horaTermino);
-        turma.setAnoSemestre(anoSemestre);
-        turma.setCargaHorariaTotal(cargaHorariaTotal);
-        turma.setInicioTurma(inicioTurma);
-        turma.setTerminoTurma(terminoTurma);
-        turma.setSituacaoTurma(situacaoTurma);
+    public Turma criarTurma(
+            String nomeTurma,
+            Professor professorResponsavel,
+            String nivelProficiencia,
+            String diaTurma,
+            String turno,
+            String formato,
+            String modalidade,
+            String realizador,
+            String horaInicio,
+            String horaTermino,
+            String anoSemestre,
+            Integer cargaHorariaTotal,
+            LocalDateTime inicioTurma,
+            LocalDateTime terminoTurma,
+            String situacaoTurma,
+            List<Long> alunoIds
+    ) {
+        try {
+            Turma turma = new Turma();
+            turma.setNomeTurma(nomeTurma);
+            turma.setProfessorResponsavel(professorResponsavel);
+            turma.setNivelProficiencia(nivelProficiencia);
+            turma.setDiaTurma(diaTurma);
+            turma.setTurno(turno);
+            turma.setFormato(formato);
+            turma.setModalidade(modalidade);
+            turma.setRealizador(realizador);
+            turma.setHoraInicio(horaInicio);
+            turma.setHoraTermino(horaTermino);
+            turma.setAnoSemestre(anoSemestre);
+            turma.setCargaHorariaTotal(cargaHorariaTotal);
+            turma.setInicioTurma(inicioTurma);
+            turma.setTerminoTurma(terminoTurma);
+            turma.setSituacaoTurma(situacaoTurma);
+            // Associação de alunos pode ser feita separadamente (via TurmaRepository ou outro serviço)
 
-        // Validação para realizador Particular
-        if ("Particular".equals(realizador) && (
-                horaInicio == null || horaTermino == null ||
-                        cargaHorariaTotal == null || inicioTurma == null || terminoTurma == null)) {
-            throw new IllegalArgumentException("Hora, carga horária e início/termino são obrigatórios para turmas particulares.");
+            Turma savedTurma = turmaRepository.save(turma);
+            logger.info("Turma criada com ID: {}", savedTurma.getId());
+            return savedTurma;
+        } catch (Exception e) {
+            logger.error("Erro ao criar turma: ", e);
+            throw new RuntimeException("Erro ao criar turma: " + e.getMessage());
         }
-
-        // Vinculação com alunos
-        if (alunoIds != null && !alunoIds.isEmpty()) {
-            List<Aluno> alunos = alunoRepository.findAllById(alunoIds)
-                    .stream()
-                    .filter(a -> a != null)
-                    .collect(Collectors.toList());
-            if (alunos.size() != alunoIds.size()) {
-                throw new RuntimeException("Um ou mais alunos não foram encontrados.");
-            }
-            turma.setAlunos(alunos);
-        }
-
-        turma.setUltimaModificacao(LocalDateTime.now());
-        return turmaRepository.save(turma);
     }
 
-    @Transactional(readOnly = true)
     public List<Turma> listarTodasTurmas() {
-        return turmaRepository.findAll();
+        try {
+            return turmaRepository.findAll();
+        } catch (Exception e) {
+            logger.error("Erro ao listar todas as turmas: ", e);
+            throw new RuntimeException("Erro ao listar turmas: " + e.getMessage());
+        }
     }
 
-    @Transactional(readOnly = true)
     public Optional<Turma> buscarTurmaPorId(Long id) {
-        return turmaRepository.findById(id);
+        try {
+            return turmaRepository.findById(id);
+        } catch (Exception e) {
+            logger.error("Erro ao buscar turma por ID {}: ", id, e);
+            throw new RuntimeException("Erro ao buscar turma: " + e.getMessage());
+        }
     }
 
     @Transactional
-    public Turma atualizarTurma(Long id, String nomeTurma, Professor professorResponsavel, String nivelProficiencia,
-                                String diaTurma, String turno, String formato, String modalidade, String realizador,
-                                LocalDateTime horaInicio, LocalDateTime horaTermino, String anoSemestre,
-                                Integer cargaHorariaTotal, LocalDateTime inicioTurma, LocalDateTime terminoTurma,
-                                String situacaoTurma, List<Long> alunoIds) {
-        Turma turmaExistente = turmaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Turma não encontrada"));
-        turmaExistente.setNomeTurma(nomeTurma);
-        turmaExistente.setProfessorResponsavel(professorResponsavel);
-        turmaExistente.setNivelProficiencia(nivelProficiencia);
-        turmaExistente.setDiaTurma(diaTurma);
-        turmaExistente.setTurno(turno);
-        turmaExistente.setFormato(formato);
-        turmaExistente.setModalidade(modalidade);
-        turmaExistente.setRealizador(realizador);
-        turmaExistente.setHoraInicio(horaInicio);
-        turmaExistente.setHoraTermino(horaTermino);
-        turmaExistente.setAnoSemestre(anoSemestre);
-        turmaExistente.setCargaHorariaTotal(cargaHorariaTotal);
-        turmaExistente.setInicioTurma(inicioTurma);
-        turmaExistente.setTerminoTurma(terminoTurma);
-        turmaExistente.setSituacaoTurma(situacaoTurma);
+    public Turma atualizarTurma(
+            Long id,
+            String nomeTurma,
+            Professor professorResponsavel,
+            String nivelProficiencia,
+            String diaTurma,
+            String turno,
+            String formato,
+            String modalidade,
+            String realizador,
+            String horaInicio,
+            String horaTermino,
+            String anoSemestre,
+            Integer cargaHorariaTotal,
+            LocalDateTime inicioTurma,
+            LocalDateTime terminoTurma,
+            String situacaoTurma,
+            List<Long> alunoIds
+    ) {
+        try {
+            Turma turmaExistente = turmaRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada com ID: " + id));
 
-        // Validação para realizador Particular
-        if ("Particular".equals(realizador) && (
-                horaInicio == null || horaTermino == null ||
-                        cargaHorariaTotal == null || inicioTurma == null || terminoTurma == null)) {
-            throw new IllegalArgumentException("Hora, carga horária e início/termino são obrigatórios para turmas particulares.");
+            turmaExistente.setNomeTurma(nomeTurma);
+            turmaExistente.setProfessorResponsavel(professorResponsavel);
+            turmaExistente.setNivelProficiencia(nivelProficiencia);
+            turmaExistente.setDiaTurma(diaTurma);
+            turmaExistente.setTurno(turno);
+            turmaExistente.setFormato(formato);
+            turmaExistente.setModalidade(modalidade);
+            turmaExistente.setRealizador(realizador);
+            turmaExistente.setHoraInicio(horaInicio);
+            turmaExistente.setHoraTermino(horaTermino);
+            turmaExistente.setAnoSemestre(anoSemestre);
+            turmaExistente.setCargaHorariaTotal(cargaHorariaTotal);
+            turmaExistente.setInicioTurma(inicioTurma);
+            turmaExistente.setTerminoTurma(terminoTurma);
+            turmaExistente.setSituacaoTurma(situacaoTurma);
+            // Associação de alunos pode ser feita separadamente
+
+            Turma updatedTurma = turmaRepository.save(turmaExistente);
+            logger.info("Turma atualizada com ID: {}", updatedTurma.getId());
+            return updatedTurma;
+        } catch (Exception e) {
+            logger.error("Erro ao atualizar turma com ID {}: ", id, e);
+            throw new RuntimeException("Erro ao atualizar turma: " + e.getMessage());
         }
-
-        // Vinculação com alunos
-        if (alunoIds != null && !alunoIds.isEmpty()) {
-            List<Aluno> alunos = alunoRepository.findAllById(alunoIds)
-                    .stream()
-                    .filter(a -> a != null)
-                    .collect(Collectors.toList());
-            if (alunos.size() != alunoIds.size()) {
-                throw new RuntimeException("Um ou mais alunos não foram encontrados.");
-            }
-            turmaExistente.setAlunos(alunos);
-        }
-
-        turmaExistente.setUltimaModificacao(LocalDateTime.now());
-        return turmaRepository.save(turmaExistente);
     }
 
     @Transactional
     public void deletarTurma(Long id) {
-        if (!turmaRepository.existsById(id)) {
-            throw new RuntimeException("Turma não encontrada");
+        try {
+            if (turmaRepository.existsById(id)) {
+                turmaRepository.deleteById(id);
+                logger.info("Turma deletada com ID: {}", id);
+            } else {
+                throw new RuntimeException("Turma não encontrada com ID: " + id);
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao deletar turma com ID {}: ", id, e);
+            throw new RuntimeException("Erro ao deletar turma: " + e.getMessage());
         }
-        turmaRepository.deleteById(id);
     }
 }

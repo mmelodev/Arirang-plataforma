@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Deletar Professor - AriranG</title>
+  <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+</head>
+<body>
+<h1>Confirmar Exclusão</h1>
+<p>Tem certeza de que deseja excluir o professor <span th:text="${professor.nomeCompleto}"></span>?</p>
+<form th:action="@{'/professores/' + ${professor.id}}" method="delete">
+  <button type="submit">Sim</button>
+</form>
+<a th:href="@{/cadastro}">Não</a>
+</body>
+</html>

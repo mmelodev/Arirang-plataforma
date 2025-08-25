@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Formulário de Professor - AriranG</title>
+  <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+</head>
+<body>
+<h1>Formulário de Professor</h1>
+<form th:action="@{/professores}" th:object="${professor}" method="post">
+  <label>Nome Completo: <input type="text" th:field="*{nomeCompleto}" /></label><br/>
+  <label>Data Nascimento: <input type="date" th:field="*{dataNascimento}" /></label><br/>
+  <label>RG: <input type="text" th:field="*{rg}" /></label><br/>
+  <label>CPF: <input type="text" th:field="*{cpf}" /></label><br/>
+  <label>Telefone: <input type="text" th:field="*{telefone}" /></label><br/>
+  <label>Cargo: <input type="text" th:field="*{cargo}" /></label><br/>
+  <label>Formação: <input type="text" th:field="*{formacao}" /></label><br/>
+  <button type="submit">Salvar</button>
+</form>
+<a th:href="@{/cadastro}">Voltar</a>
+</body>
+</html>

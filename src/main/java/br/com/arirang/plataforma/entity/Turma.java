@@ -1,43 +1,41 @@
 package br.com.arirang.plataforma.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 public class Turma {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nomeTurma; // Nome de um animal
-    @ManyToOne
-    @JoinColumn(name = "professor_id")
+    private String nomeTurma;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_responsavel_id")
     private Professor professorResponsavel;
     private String nivelProficiencia;
-    private String diaTurma; // Ex.: Sexta
+    private String diaTurma;
     private String turno;
-    private String formato; // Presencial/Online/Híbrido
-    private String modalidade; // Intensivo/Regular/Empresarial
-    private String realizador; // AriranG/Particular/Convênio
-    private LocalDateTime horaInicio;
-    private LocalDateTime horaTermino;
+    private String formato;
+    private String modalidade;
+    private String realizador;
+    private String horaInicio;
+    private String horaTermino;
     private String anoSemestre;
     private Integer cargaHorariaTotal;
-    private LocalDateTime inicioTurma; // Semestre/Ano
-    private LocalDateTime terminoTurma; // Semestre/Ano
-    private String situacaoTurma; // Ativa/Inativa/Completa/Descontinuada/Congelada
-
-    @ManyToMany
+    private LocalDateTime inicioTurma;
+    private LocalDateTime terminoTurma;
+    private String situacaoTurma;
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "turma_aluno",
             joinColumns = @JoinColumn(name = "turma_id"),
             inverseJoinColumns = @JoinColumn(name = "aluno_id")
     )
     private List<Aluno> alunos;
-
-    @Column(name = "ultima_modificacao")
-    private LocalDateTime ultimaModificacao;
 
     // Getters e Setters
     public Long getId() { return id; }
@@ -58,10 +56,10 @@ public class Turma {
     public void setModalidade(String modalidade) { this.modalidade = modalidade; }
     public String getRealizador() { return realizador; }
     public void setRealizador(String realizador) { this.realizador = realizador; }
-    public LocalDateTime getHoraInicio() { return horaInicio; }
-    public void setHoraInicio(LocalDateTime horaInicio) { this.horaInicio = horaInicio; }
-    public LocalDateTime getHoraTermino() { return horaTermino; }
-    public void setHoraTermino(LocalDateTime horaTermino) { this.horaTermino = horaTermino; }
+    public String getHoraInicio() { return horaInicio; }
+    public void setHoraInicio(String horaInicio) { this.horaInicio = horaInicio; }
+    public String getHoraTermino() { return horaTermino; }
+    public void setHoraTermino(String horaTermino) { this.horaTermino = horaTermino; }
     public String getAnoSemestre() { return anoSemestre; }
     public void setAnoSemestre(String anoSemestre) { this.anoSemestre = anoSemestre; }
     public Integer getCargaHorariaTotal() { return cargaHorariaTotal; }
@@ -74,6 +72,4 @@ public class Turma {
     public void setSituacaoTurma(String situacaoTurma) { this.situacaoTurma = situacaoTurma; }
     public List<Aluno> getAlunos() { return alunos; }
     public void setAlunos(List<Aluno> alunos) { this.alunos = alunos; }
-    public LocalDateTime getUltimaModificacao() { return ultimaModificacao; }
-    public void setUltimaModificacao(LocalDateTime ultimaModificacao) { this.ultimaModificacao = ultimaModificacao; }
 }
