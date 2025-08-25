@@ -72,9 +72,9 @@ public class ProfessorController {
                     .map(professor -> new ProfessorDTO(
                             professor.getId(),
                             professor.getNomeCompleto(),
-                            professor.getDataNascimento(), // Adicionado
-                            professor.getRg(),            // Adicionado
-                            professor.getCpf(),           // Adicionado
+                            professor.getDataNascimento(),
+                            professor.getRg(),
+                            professor.getCpf(),
                             professor.getTelefone(),
                             professor.getCargo(),
                             professor.getFormacao()
