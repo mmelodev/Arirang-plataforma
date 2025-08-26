@@ -1,16 +1,15 @@
 package br.com.arirang.plataforma.controller;
 
 import br.com.arirang.plataforma.dto.ProfessorDTO;
-import br.com.arirang.plataforma.entity.Professor;
 import br.com.arirang.plataforma.service.ProfessorService;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,9 +37,12 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<ProfessorDTO> criarProfessor(@Valid @RequestBody ProfessorDTO novoProfessor) {
+    public String criarProfessorMVC(@Valid @ModelAttribute("professor") ProfessorDTO novoProfessor, BindingResult bindingResult, Model model) {
         try {
-            Professor professor = professorService.criarProfessor(
+            if (bindingResult.hasErrors()) {
+                return "professor-form";
+            }
+            professorService.criarProfessor(
                     novoProfessor.nomeCompleto(),
                     novoProfessor.dataNascimento(),
                     novoProfessor.rg(),
@@ -49,19 +51,11 @@ public class ProfessorController {
                     novoProfessor.cargo(),
                     novoProfessor.formacao()
             );
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ProfessorDTO(
-                    professor.getId(),
-                    professor.getNomeCompleto(),
-                    professor.getDataNascimento(),
-                    professor.getRg(),
-                    professor.getCpf(),
-                    professor.getTelefone(),
-                    professor.getCargo(),
-                    professor.getFormacao()
-            ));
+            return "redirect:/professores";
         } catch (Exception e) {
             logger.error("Erro ao criar professor: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            model.addAttribute("error", "Erro ao criar professor: " + e.getMessage());
+            return "error";
         }
     }
 
@@ -129,10 +123,13 @@ public class ProfessorController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> atualizarProfessor(@PathVariable Long id, @Valid @RequestBody ProfessorDTO professorAtualizado) {
+    @PostMapping("/atualizar/{id}")
+    public String atualizarProfessorMVC(@PathVariable Long id, @Valid @ModelAttribute("professor") ProfessorDTO professorAtualizado, BindingResult bindingResult, Model model) {
         try {
-            Professor professor = professorService.atualizarProfessor(
+            if (bindingResult.hasErrors()) {
+                return "professor-form";
+            }
+            professorService.atualizarProfessor(
                     id,
                     professorAtualizado.nomeCompleto(),
                     professorAtualizado.dataNascimento(),
@@ -142,19 +139,11 @@ public class ProfessorController {
                     professorAtualizado.cargo(),
                     professorAtualizado.formacao()
             );
-            return ResponseEntity.ok(new ProfessorDTO(
-                    professor.getId(),
-                    professor.getNomeCompleto(),
-                    professor.getDataNascimento(),
-                    professor.getRg(),
-                    professor.getCpf(),
-                    professor.getTelefone(),
-                    professor.getCargo(),
-                    professor.getFormacao()
-            ));
+            return "redirect:/professores";
         } catch (Exception e) {
             logger.error("Erro ao atualizar professor com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            model.addAttribute("error", "Erro ao atualizar professor: " + e.getMessage());
+            return "error";
         }
     }
 
@@ -182,14 +171,18 @@ public class ProfessorController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProfessor(@PathVariable Long id) {
-        try {
-            professorService.deletarProfessor(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            logger.error("Erro ao deletar professor com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PostMapping(value = "/{id}")
+    public String deletarProfessorMVC(@PathVariable Long id, @RequestParam(value = "_method", required = false) String method, Model model) {
+        if ("delete".equalsIgnoreCase(method)) {
+            try {
+                professorService.deletarProfessor(id);
+                return "redirect:/professores";
+            } catch (Exception e) {
+                logger.error("Erro ao deletar professor com ID {}: ", id, e);
+                model.addAttribute("error", "Erro ao deletar professor: " + e.getMessage());
+                return "error";
+            }
         }
+        return "redirect:/professores";
     }
 }

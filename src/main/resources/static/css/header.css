@@ -1,0 +1,13 @@
+/* Header global extraído de home.css e padronizado */
+body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+.slider-thumb::before { display:none; }
+.main-nav { justify-items: flex-start; display: flex; justify-content: space-between; align-items: center; background-color: #1a1a1a; padding: 10px 20px; margin: 10px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 2rem; }
+.logo img { width: 110px; height: 50px; }
+.nav-list { padding: 0; }
+/* Links e itens do menu: branco por padrão, hover azul, sem sublinhado */
+.main-nav a { color: aliceblue; text-decoration: none; }
+.main-nav a:hover { color: #007bff; text-decoration: none; }
+.nav-list li { list-style: none; display: inline-block; margin-right: 20px; font-size: 1.2em; color: aliceblue; transition: color .3s ease; }
+.nav-list li:hover { color: #007bff; }
+.nav-element.active, .nav-list li.active { color: #007bff; }
+

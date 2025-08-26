@@ -4,19 +4,17 @@ import br.com.arirang.plataforma.dto.AlunoDTO;
 import br.com.arirang.plataforma.dto.TurmaDTO;
 import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.entity.Professor;
-import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.service.TurmaService;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,11 +43,14 @@ public class TurmaController {
     }
 
     @PostMapping
-    public ResponseEntity<TurmaDTO> criarTurma(@Valid @RequestBody TurmaDTO novaTurma) {
+    public String criarTurmaMVC(@Valid @ModelAttribute("turma") TurmaDTO novaTurma, BindingResult bindingResult, Model model) {
         try {
+            if (bindingResult.hasErrors()) {
+                return "turma-form";
+            }
             Professor professorResponsavel = novaTurma.professorResponsavelId() != null ?
                     new Professor() {{ setId(novaTurma.professorResponsavelId()); }} : null;
-            Turma turma = turmaService.criarTurma(
+            turmaService.criarTurma(
                     novaTurma.nomeTurma(),
                     professorResponsavel,
                     novaTurma.nivelProficiencia(),
@@ -67,28 +68,11 @@ public class TurmaController {
                     novaTurma.situacaoTurma(),
                     novaTurma.alunoIds()
             );
-            return ResponseEntity.status(HttpStatus.CREATED).body(new TurmaDTO(
-                    turma.getId(),
-                    turma.getNomeTurma(),
-                    turma.getProfessorResponsavel() != null ? turma.getProfessorResponsavel().getId() : null,
-                    turma.getNivelProficiencia(),
-                    turma.getDiaTurma(),
-                    turma.getTurno(),
-                    turma.getFormato(),
-                    turma.getModalidade(),
-                    turma.getRealizador(),
-                    turma.getHoraInicio(),
-                    turma.getHoraTermino(),
-                    turma.getAnoSemestre(),
-                    turma.getCargaHorariaTotal(),
-                    turma.getInicioTurma(),
-                    turma.getTerminoTurma(),
-                    turma.getSituacaoTurma(),
-                    turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : null
-            ));
+            return "redirect:/turmas";
         } catch (Exception e) {
             logger.error("Erro ao criar turma: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            model.addAttribute("error", "Erro ao criar turma: " + e.getMessage());
+            return "error";
         }
     }
 
@@ -209,12 +193,15 @@ public class TurmaController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TurmaDTO> atualizarTurma(@PathVariable Long id, @Valid @RequestBody TurmaDTO turmaAtualizada) {
+    @PostMapping("/atualizar/{id}")
+    public String atualizarTurmaMVC(@PathVariable Long id, @Valid @ModelAttribute("turma") TurmaDTO turmaAtualizada, BindingResult bindingResult, Model model) {
         try {
+            if (bindingResult.hasErrors()) {
+                return "turma-form";
+            }
             Professor professorResponsavel = turmaAtualizada.professorResponsavelId() != null ?
                     new Professor() {{ setId(turmaAtualizada.professorResponsavelId()); }} : null;
-            Turma turma = turmaService.atualizarTurma(
+            turmaService.atualizarTurma(
                     id,
                     turmaAtualizada.nomeTurma(),
                     professorResponsavel,
@@ -233,28 +220,11 @@ public class TurmaController {
                     turmaAtualizada.situacaoTurma(),
                     turmaAtualizada.alunoIds()
             );
-            return ResponseEntity.ok(new TurmaDTO(
-                    turma.getId(),
-                    turma.getNomeTurma(),
-                    turma.getProfessorResponsavel() != null ? turma.getProfessorResponsavel().getId() : null,
-                    turma.getNivelProficiencia(),
-                    turma.getDiaTurma(),
-                    turma.getTurno(),
-                    turma.getFormato(),
-                    turma.getModalidade(),
-                    turma.getRealizador(),
-                    turma.getHoraInicio(),
-                    turma.getHoraTermino(),
-                    turma.getAnoSemestre(),
-                    turma.getCargaHorariaTotal(),
-                    turma.getInicioTurma(),
-                    turma.getTerminoTurma(),
-                    turma.getSituacaoTurma(),
-                    turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : null
-            ));
+            return "redirect:/turmas";
         } catch (Exception e) {
             logger.error("Erro ao atualizar turma com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            model.addAttribute("error", "Erro ao atualizar turma: " + e.getMessage());
+            return "error";
         }
     }
 
@@ -291,14 +261,18 @@ public class TurmaController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarTurma(@PathVariable Long id) {
-        try {
-            turmaService.deletarTurma(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            logger.error("Erro ao deletar turma com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PostMapping(value = "/{id}")
+    public String deletarTurmaMVC(@PathVariable Long id, @RequestParam(value = "_method", required = false) String method, Model model) {
+        if ("delete".equalsIgnoreCase(method)) {
+            try {
+                turmaService.deletarTurma(id);
+                return "redirect:/turmas";
+            } catch (Exception e) {
+                logger.error("Erro ao deletar turma com ID {}: ", id, e);
+                model.addAttribute("error", "Erro ao deletar turma: " + e.getMessage());
+                return "error";
+            }
         }
+        return "redirect:/turmas";
     }
 }

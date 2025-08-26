@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Aluno - Formulário</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
+    <link rel="stylesheet" th:href="@{/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/css/home.css?v=1.0}" />
+</head>
+<body>
+<div class="slider-thumb"></div>
+<div class="main-nav" style="margin-bottom: 1rem;">
+    <div class="logo">
+        <a th:href="@{/}"><img th:src="@{/img/horizontal_negativa.png}" alt="Logo" /></a>
+    </div>
+    <nav>
+        <ul class="nav-list">
+            <a th:href="@{/}"><li class="nav-element">Home</li></a>
+            <a th:href="@{/alunos/lista}"><li class="nav-element active">Alunos</li></a>
+            <a th:href="@{/turmas}"><li class="nav-element">Turmas</li></a>
+            <a th:href="@{/cadastro}"><li class="nav-element">Cadastro</li></a>
+        </ul>
+    </nav>
+</div>
+
+<div class="page-container">
+<div class="form-card">
+<h2 style="margin-top:0">Aluno</h2>
+<form class="form-root" th:object="${aluno}" th:action="@{/alunos}" method="post">
+    <input type="hidden" th:if="*{id}" th:field="*{id}" />
+
+    <div class="row">
+        <div class="field">
+            <label>Nome completo</label>
+            <input th:field="*{nomeCompleto}" placeholder="Nome" required>
+            <div th:if="${#fields.hasErrors('nomeCompleto')}" class="field-error" th:errors="*{nomeCompleto}"></div>
+        </div>
+        <div class="field">
+            <label>Email</label>
+            <input th:field="*{email}" type="email" placeholder="email@exemplo.com">
+            <div th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Telefone</label>
+            <input th:field="*{telefone}" placeholder="(00) 00000-0000">
+            <div th:if="${#fields.hasErrors('telefone')}" class="field-error" th:errors="*{telefone}"></div>
+        </div>
+        <div class="field">
+            <label>CPF</label>
+            <input th:field="*{cpf}" placeholder="000.000.000-00">
+            <div th:if="${#fields.hasErrors('cpf')}" class="field-error" th:errors="*{cpf}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>RG</label>
+            <input th:field="*{rg}">
+        </div>
+        <div class="field">
+            <label>Órgão Expedidor</label>
+            <input th:field="*{orgaoExpeditorRg}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Nacionalidade</label>
+            <input th:field="*{nacionalidade}">
+        </div>
+        <div class="field">
+            <label>UF</label>
+            <input th:field="*{uf}" maxlength="2">
+        </div>
+        <div class="field">
+            <label>Data de Nascimento</label>
+            <input th:field="*{dataNascimento}" type="date">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Nome Social</label>
+            <input th:field="*{nomeSocial}">
+        </div>
+        <div class="field">
+            <label>Gênero</label>
+            <input th:field="*{genero}">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Situação</label>
+            <input th:field="*{situacao}">
+        </div>
+        <div class="field">
+            <label>Último Nível</label>
+            <input th:field="*{ultimoNivel}">
+        </div>
+    </div>
+
+    <h3>Endereço</h3>
+    <div class="row">
+        <div class="field">
+            <label>Rua</label>
+            <input th:field="*{endereco.rua}">
+        </div>
+        <div class="field">
+            <label>Número</label>
+            <input th:field="*{endereco.numero}">
+        </div>
+        <div class="field">
+            <label>Bairro</label>
+            <input th:field="*{endereco.bairro}">
+        </div>
+    </div>
+    <div class="row">
+        <div class="field">
+            <label>Complemento</label>
+            <input th:field="*{endereco.complemento}">
+        </div>
+        <div class="field">
+            <label>CEP</label>
+            <input th:field="*{endereco.cep}">
+        </div>
+        <div class="field">
+            <label>Cidade</label>
+            <input th:field="*{endereco.cidade}">
+        </div>
+    </div>
+
+    <div class="actions">
+        <button type="submit" class="btn-primary">Salvar</button>
+        <a href="/alunos/lista" class="btn-secondary">Cancelar</a>
+    </div>
+</form>
+</div>
+</div>
+</body>
+</html>
+
+

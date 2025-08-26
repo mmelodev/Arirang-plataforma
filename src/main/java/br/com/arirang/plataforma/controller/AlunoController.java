@@ -3,21 +3,23 @@ package br.com.arirang.plataforma.controller;
 import br.com.arirang.plataforma.dto.AlunoDTO;
 import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.entity.Turma;
+import br.com.arirang.plataforma.entity.Endereco;
 import br.com.arirang.plataforma.service.AlunoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import br.com.arirang.plataforma.service.TurmaService;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/alunos")
@@ -27,6 +29,9 @@ public class AlunoController {
 
     @Autowired
     private AlunoService alunoService;
+
+    @Autowired
+    private TurmaService turmaService;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
@@ -93,7 +98,11 @@ public class AlunoController {
     @GetMapping("/novo")
     public String novoAlunoForm(Model model) {
         try {
-            model.addAttribute("aluno", new AlunoDTO(null, "", "", "", "", "", "", "", "", "", "", "", "", null, null, null, "", false, null));
+            model.addAttribute("aluno", new AlunoDTO(
+                    null, "", "", "", "", "", "", "", "", "", "", "", "", "",
+                    new Endereco(),
+                    null, "", false, null
+            ));
             return "aluno-form";
         } catch (Exception e) {
             logger.error("Erro ao carregar formulário de novo aluno: ", e);
@@ -102,14 +111,19 @@ public class AlunoController {
         }
     }
 
+    // Processa o submit do formulário MVC (x-www-form-urlencoded)
     @PostMapping
-    public ResponseEntity<AlunoDTO> criarAluno(@Valid @RequestBody AlunoDTO novoAluno) {
+    public String criarAlunoMVC(@Valid @ModelAttribute("aluno") AlunoDTO novoAluno, BindingResult bindingResult, Model model) {
         try {
-            Aluno aluno = alunoService.criarAluno(novoAluno);
-            return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(aluno));
+            if (bindingResult.hasErrors()) {
+                return "aluno-form";
+            }
+            alunoService.criarAluno(novoAluno);
+            return "redirect:/alunos/lista";
         } catch (Exception e) {
             logger.error("Erro ao criar aluno: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            model.addAttribute("error", "Erro ao criar aluno: " + e.getMessage());
+            return "error";
         }
     }
 
@@ -128,14 +142,19 @@ public class AlunoController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<AlunoDTO> atualizarAluno(@PathVariable Long id, @Valid @RequestBody AlunoDTO alunoAtualizado) {
+    // Atualização via formulário MVC
+    @PostMapping("/atualizar/{id}")
+    public String atualizarAlunoMVC(@PathVariable Long id, @Valid @ModelAttribute("aluno") AlunoDTO alunoAtualizado, BindingResult bindingResult, Model model) {
         try {
-            Aluno aluno = alunoService.atualizarAluno(id, alunoAtualizado);
-            return ResponseEntity.ok(convertToDTO(aluno));
+            if (bindingResult.hasErrors()) {
+                return "aluno-form";
+            }
+            alunoService.atualizarAluno(id, alunoAtualizado);
+            return "redirect:/alunos/lista";
         } catch (Exception e) {
             logger.error("Erro ao atualizar aluno com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            model.addAttribute("error", "Erro ao atualizar aluno: " + e.getMessage());
+            return "error";
         }
     }
 
@@ -154,15 +173,20 @@ public class AlunoController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarAluno(@PathVariable Long id) {
-        try {
-            alunoService.deletarAluno(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            logger.error("Erro ao deletar aluno com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    // Exclusão via formulário (method override no template)
+    @PostMapping(value = "/{id}")
+    public String deletarAlunoMVC(@PathVariable Long id, @RequestParam(value = "_method", required = false) String method, Model model) {
+        if ("delete".equalsIgnoreCase(method)) {
+            try {
+                alunoService.deletarAluno(id);
+                return "redirect:/alunos/lista";
+            } catch (Exception e) {
+                logger.error("Erro ao deletar aluno com ID {}: ", id, e);
+                model.addAttribute("error", "Erro ao deletar aluno: " + e.getMessage());
+                return "error";
+            }
         }
+        return "redirect:/alunos/lista";
     }
 
     @GetMapping("/turma/{id}")
@@ -172,10 +196,23 @@ public class AlunoController {
                     .map(this::convertToDTO)
                     .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
             model.addAttribute("aluno", aluno);
+            model.addAttribute("turmas", turmaService.listarTodasTurmas());
             return "aluno-turma";
         } catch (Exception e) {
             logger.error("Erro ao carregar associação de turma para ID {}: ", id, e);
             model.addAttribute("error", "Erro ao carregar a associação: " + e.getMessage());
+            return "error";
+        }
+    }
+
+    @PostMapping("/{id}/turmas")
+    public String salvarAssociacaoTurma(@PathVariable Long id, @RequestParam("turmaId") Long turmaId, Model model) {
+        try {
+            alunoService.associarTurma(id, turmaId);
+            return "redirect:/alunos/lista";
+        } catch (Exception e) {
+            logger.error("Erro ao associar turma para ID {}: ", id, e);
+            model.addAttribute("error", "Erro ao associar turma: " + e.getMessage());
             return "error";
         }
     }

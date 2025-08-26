@@ -4,22 +4,42 @@
     <meta charset="UTF-8" />
     <title>Formulário de Turma - AriranG</title>
     <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+    <link rel="stylesheet" th:href="@{/css/forms.css}" />
 </head>
 <body>
 <h1>Formulário de Turma</h1>
-<form th:action="@{/turmas}" th:object="${turma}" method="post">
-    <label>Nome da Turma: <input type="text" th:field="*{nomeTurma}" /></label><br/>
+<form class="form-root" th:action="@{/turmas}" th:object="${turma}" method="post">
+    <label>Nome da Turma: <input type="text" th:field="*{nomeTurma}" /></label>
+    <div th:if="${#fields.hasErrors('nomeTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{nomeTurma}"></div><br/>
     <label>Professor Responsável ID: <input type="number" th:field="*{professorResponsavelId}" /></label><br/>
-    <label>Nível de Proficiência: <input type="text" th:field="*{nivelProficiencia}" /></label><br/>
-    <label>Dia da Turma: <input type="text" th:field="*{diaTurma}" /></label><br/>
-    <label>Turno: <input type="text" th:field="*{turno}" /></label><br/>
-    <label>Formato: <input type="text" th:field="*{formato}" /></label><br/>
-    <label>Modalidade: <input type="text" th:field="*{modalidade}" /></label><br/>
-    <label>Realizador: <input type="text" th:field="*{realizador}" /></label><br/>
-    <label>Hora Início: <input type="time" th:field="*{horaInicio}" /></label><br/>
-    <label>Hora Término: <input type="time" th:field="*{horaTermino}" /></label><br/>
-    <label>Ano/Semestre: <input type="text" th:field="*{anoSemestre}" /></label><br/>
-    <label>Carga Horária Total: <input type="number" th:field="*{cargaHorariaTotal}" /></label><br/>
-    <label>Início da Turma: <input type="date" th:field="*{inicioTurma}" /></label><br/>
-    <label>Término da Turma: <input type="date" th:field="*{terminoTurma}" /></label><br/>
-    <label>Situação da Turma: <input type="text" th
+    <label>Nível de Proficiência: <input type="text" th:field="*{nivelProficiencia}" /></label>
+    <div th:if="${#fields.hasErrors('nivelProficiencia')}" style="color:#b00020;font-size:.9rem" th:errors="*{nivelProficiencia}"></div><br/>
+    <label>Dia da Turma: <input type="text" th:field="*{diaTurma}" /></label>
+    <div th:if="${#fields.hasErrors('diaTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{diaTurma}"></div><br/>
+    <label>Turno: <input type="text" th:field="*{turno}" /></label>
+    <div th:if="${#fields.hasErrors('turno')}" style="color:#b00020;font-size:.9rem" th:errors="*{turno}"></div><br/>
+    <label>Formato: <input type="text" th:field="*{formato}" /></label>
+    <div th:if="${#fields.hasErrors('formato')}" style="color:#b00020;font-size:.9rem" th:errors="*{formato}"></div><br/>
+    <label>Modalidade: <input type="text" th:field="*{modalidade}" /></label>
+    <div th:if="${#fields.hasErrors('modalidade')}" style="color:#b00020;font-size:.9rem" th:errors="*{modalidade}"></div><br/>
+    <label>Realizador: <input type="text" th:field="*{realizador}" /></label>
+    <div th:if="${#fields.hasErrors('realizador')}" style="color:#b00020;font-size:.9rem" th:errors="*{realizador}"></div><br/>
+    <label>Hora Início: <input type="time" th:field="*{horaInicio}" /></label>
+    <div th:if="${#fields.hasErrors('horaInicio')}" style="color:#b00020;font-size:.9rem" th:errors="*{horaInicio}"></div><br/>
+    <label>Hora Término: <input type="time" th:field="*{horaTermino}" /></label>
+    <div th:if="${#fields.hasErrors('horaTermino')}" style="color:#b00020;font-size:.9rem" th:errors="*{horaTermino}"></div><br/>
+    <label>Ano/Semestre: <input type="text" th:field="*{anoSemestre}" /></label>
+    <div th:if="${#fields.hasErrors('anoSemestre')}" style="color:#b00020;font-size:.9rem" th:errors="*{anoSemestre}"></div><br/>
+    <label>Carga Horária Total: <input type="number" th:field="*{cargaHorariaTotal}" /></label>
+    <div th:if="${#fields.hasErrors('cargaHorariaTotal')}" style="color:#b00020;font-size:.9rem" th:errors="*{cargaHorariaTotal}"></div><br/>
+    <label>Início da Turma: <input type="date" th:field="*{inicioTurma}" /></label>
+    <div th:if="${#fields.hasErrors('inicioTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{inicioTurma}"></div><br/>
+    <label>Término da Turma: <input type="date" th:field="*{terminoTurma}" /></label>
+    <div th:if="${#fields.hasErrors('terminoTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{terminoTurma}"></div><br/>
+    <label>Situação da Turma: <input type="text" th:field="*{situacaoTurma}" /></label>
+    <div th:if="${#fields.hasErrors('situacaoTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{situacaoTurma}"></div><br/>
+
+    <div class="actions">
+        <button type="submit" class="btn-primary">Salvar</button>
+        <a th:href="@{/turmas}" class="btn-secondary">Cancelar</a>
+    </div>

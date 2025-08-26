@@ -2,11 +2,11 @@ package br.com.arirang.plataforma.service;
 
 import br.com.arirang.plataforma.dto.AlunoDTO;
 import br.com.arirang.plataforma.entity.Aluno;
-import br.com.arirang.plataforma.entity.Endereco;
 import br.com.arirang.plataforma.entity.Responsavel;
 import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.repository.AlunoRepository;
 import br.com.arirang.plataforma.repository.ResponsavelRepository;
+import br.com.arirang.plataforma.repository.TurmaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -31,6 +31,9 @@ public class AlunoService {
 
     @Autowired
     private ResponsavelRepository responsavelRepository;
+
+    @Autowired
+    private TurmaRepository turmaRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -88,11 +91,10 @@ public class AlunoService {
                 aluno.setResponsavel(responsavel);
             }
 
-            // Associar turmas (implementar conforme necessário)
+            // Associar turmas informadas no DTO
             if (alunoDTO.turmaIds() != null) {
-                // Aqui seria necessário um TurmaRepository para buscar as turmas por ID
-                // List<Turma> turmas = turmaRepository.findAllById(alunoDTO.turmaIds());
-                // aluno.setTurmas(turmas);
+                List<Turma> turmas = turmaRepository.findAllById(alunoDTO.turmaIds());
+                aluno.setTurmas(turmas);
             }
 
             Aluno savedAluno = alunoRepository.save(aluno);
@@ -134,11 +136,11 @@ public class AlunoService {
                 alunoExistente.setResponsavel(responsavel);
             }
 
-            // Atualizar turmas (implementar conforme necessário)
-            // if (alunoDTO.turmaIds() != null) {
-            //     List<Turma> turmas = turmaRepository.findAllById(alunoDTO.turmaIds());
-            //     alunoExistente.setTurmas(turmas);
-            // }
+            // Atualizar turmas informadas no DTO
+            if (alunoDTO.turmaIds() != null) {
+                List<Turma> turmas = turmaRepository.findAllById(alunoDTO.turmaIds());
+                alunoExistente.setTurmas(turmas);
+            }
 
             Aluno updatedAluno = alunoRepository.save(alunoExistente);
             logger.info("Aluno atualizado com ID: {}", updatedAluno.getId());
@@ -161,6 +163,30 @@ public class AlunoService {
         } catch (Exception e) {
             logger.error("Erro ao deletar aluno com ID {}: ", id, e);
             throw new RuntimeException("Erro ao deletar aluno: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void associarTurma(Long alunoId, Long turmaId) {
+        try {
+            Aluno aluno = alunoRepository.findById(alunoId)
+                    .orElseThrow(() -> new RuntimeException("Aluno não encontrado com ID: " + alunoId));
+            Turma turma = turmaRepository.findById(turmaId)
+                    .orElseThrow(() -> new RuntimeException("Turma não encontrada com ID: " + turmaId));
+
+            List<Turma> turmas = aluno.getTurmas();
+            if (turmas == null) {
+                turmas = new java.util.ArrayList<>();
+            }
+            if (turmas.stream().noneMatch(t -> t.getId().equals(turmaId))) {
+                turmas.add(turma);
+                aluno.setTurmas(turmas);
+                alunoRepository.save(aluno);
+                logger.info("Turma {} associada ao aluno {}", turmaId, alunoId);
+            }
+        } catch (Exception e) {
+            logger.error("Erro ao associar turma {} ao aluno {}: ", turmaId, alunoId, e);
+            throw new RuntimeException("Erro ao associar turma: " + e.getMessage());
         }
     }
 }
