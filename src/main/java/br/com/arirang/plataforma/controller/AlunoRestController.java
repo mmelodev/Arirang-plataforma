@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,9 +25,12 @@ public class AlunoRestController {
     @Autowired
     private AlunoService alunoService;
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
     private AlunoDTO convertToDTO(Aluno aluno) {
+        if (aluno.getDataNascimento() == null) {
+            // This case should ideally not happen if data is consistent
+            logger.warn("Data de nascimento nula para o aluno com ID: {}", aluno.getId());
+            // Handle appropriately, maybe return a DTO with null date or throw a more specific exception
+        }
         return new AlunoDTO(
                 aluno.getId(),
                 aluno.getNomeCompleto(),
@@ -38,7 +41,7 @@ public class AlunoRestController {
                 aluno.getNacionalidade(),
                 aluno.getUf(),
                 aluno.getTelefone(),
-                aluno.getDataNascimento() != null ? aluno.getDataNascimento().format(DATE_TIME_FORMATTER) : null,
+                aluno.getDataNascimento(), // Returns LocalDate directly
                 aluno.getNomeSocial(),
                 aluno.getGenero(),
                 aluno.getSituacao(),
@@ -47,7 +50,7 @@ public class AlunoRestController {
                 aluno.getResponsavel() != null ? aluno.getResponsavel().getId() : null,
                 aluno.getGrauParentesco(),
                 aluno.isResponsavelFinanceiro(),
-                aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : null
+                aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : Collections.emptyList()
         );
     }
 
@@ -73,9 +76,9 @@ public class AlunoRestController {
             Aluno aluno = alunoService.criarAluno(novoAluno);
             return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(aluno));
         } catch (Exception e) {
-            logger.error("Erro ao criar aluno: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+            logger.error("Erro ao criar aluno via API: ", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }    
     }
 
     @PutMapping("/{id}")
@@ -83,9 +86,14 @@ public class AlunoRestController {
         try {
             Aluno aluno = alunoService.atualizarAluno(id, alunoAtualizado);
             return ResponseEntity.ok(convertToDTO(aluno));
-        } catch (Exception e) {
-            logger.error("Erro ao atualizar aluno com ID {}: ", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (RuntimeException e) {
+             // Catches specific exceptions like "Aluno não encontrado"
+            logger.error("Erro ao atualizar aluno com ID {} via API: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
+        } 
+        catch (Exception e) {
+            logger.error("Erro geral ao atualizar aluno com ID {} via API: ", id, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -95,10 +103,8 @@ public class AlunoRestController {
             alunoService.deletarAluno(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            logger.error("Erro ao deletar aluno com ID {}: ", id, e);
+            logger.error("Erro ao deletar aluno com ID {} via API: ", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
-
-

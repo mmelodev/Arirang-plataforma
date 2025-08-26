@@ -1,8 +1,11 @@
 package br.com.arirang.plataforma.service;
 
 import br.com.arirang.plataforma.dto.TurmaDTO;
+import br.com.arirang.plataforma.entity.Aluno;
 import br.com.arirang.plataforma.entity.Professor;
 import br.com.arirang.plataforma.entity.Turma;
+import br.com.arirang.plataforma.repository.AlunoRepository;
+import br.com.arirang.plataforma.repository.ProfessorRepository;
 import br.com.arirang.plataforma.repository.TurmaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TurmaService {
@@ -23,43 +25,41 @@ public class TurmaService {
     @Autowired
     private TurmaRepository turmaRepository;
 
+    @Autowired
+    private ProfessorRepository professorRepository; // Dependency needed for conversion
+
+    @Autowired
+    private AlunoRepository alunoRepository; // Dependency needed for conversion
+
     @Transactional
-    public Turma criarTurma(
-            String nomeTurma,
-            Professor professorResponsavel,
-            String nivelProficiencia,
-            String diaTurma,
-            String turno,
-            String formato,
-            String modalidade,
-            String realizador,
-            String horaInicio,
-            String horaTermino,
-            String anoSemestre,
-            Integer cargaHorariaTotal,
-            LocalDateTime inicioTurma,
-            LocalDateTime terminoTurma,
-            String situacaoTurma,
-            List<Long> alunoIds
-    ) {
+    public Turma criarTurma(TurmaDTO turmaDTO) {
         try {
             Turma turma = new Turma();
-            turma.setNomeTurma(nomeTurma);
-            turma.setProfessorResponsavel(professorResponsavel);
-            turma.setNivelProficiencia(nivelProficiencia);
-            turma.setDiaTurma(diaTurma);
-            turma.setTurno(turno);
-            turma.setFormato(formato);
-            turma.setModalidade(modalidade);
-            turma.setRealizador(realizador);
-            turma.setHoraInicio(horaInicio);
-            turma.setHoraTermino(horaTermino);
-            turma.setAnoSemestre(anoSemestre);
-            turma.setCargaHorariaTotal(cargaHorariaTotal);
-            turma.setInicioTurma(inicioTurma);
-            turma.setTerminoTurma(terminoTurma);
-            turma.setSituacaoTurma(situacaoTurma);
-            // Associação de alunos pode ser feita separadamente (via TurmaRepository ou outro serviço)
+            turma.setNomeTurma(turmaDTO.nomeTurma());
+            turma.setNivelProficiencia(turmaDTO.nivelProficiencia());
+            turma.setDiaTurma(turmaDTO.diaTurma());
+            turma.setTurno(turmaDTO.turno());
+            turma.setFormato(turmaDTO.formato());
+            turma.setModalidade(turmaDTO.modalidade());
+            turma.setRealizador(turmaDTO.realizador());
+            turma.setHoraInicio(turmaDTO.horaInicio());
+            turma.setHoraTermino(turmaDTO.horaTermino());
+            turma.setAnoSemestre(turmaDTO.anoSemestre());
+            turma.setCargaHorariaTotal(turmaDTO.cargaHorariaTotal());
+            turma.setInicioTurma(turmaDTO.inicioTurma());
+            turma.setTerminoTurma(turmaDTO.terminoTurma());
+            turma.setSituacaoTurma(turmaDTO.situacaoTurma());
+
+            if (turmaDTO.professorResponsavelId() != null) {
+                Professor professor = professorRepository.findById(turmaDTO.professorResponsavelId())
+                        .orElseThrow(() -> new RuntimeException("Professor não encontrado com ID: " + turmaDTO.professorResponsavelId()));
+                turma.setProfessorResponsavel(professor);
+            }
+
+            if (turmaDTO.alunoIds() != null && !turmaDTO.alunoIds().isEmpty()) {
+                List<Aluno> alunos = alunoRepository.findAllById(turmaDTO.alunoIds());
+                turma.setAlunos(alunos);
+            }
 
             Turma savedTurma = turmaRepository.save(turma);
             logger.info("Turma criada com ID: {}", savedTurma.getId());
@@ -89,45 +89,40 @@ public class TurmaService {
     }
 
     @Transactional
-    public Turma atualizarTurma(
-            Long id,
-            String nomeTurma,
-            Professor professorResponsavel,
-            String nivelProficiencia,
-            String diaTurma,
-            String turno,
-            String formato,
-            String modalidade,
-            String realizador,
-            String horaInicio,
-            String horaTermino,
-            String anoSemestre,
-            Integer cargaHorariaTotal,
-            LocalDateTime inicioTurma,
-            LocalDateTime terminoTurma,
-            String situacaoTurma,
-            List<Long> alunoIds
-    ) {
+    public Turma atualizarTurma(Long id, TurmaDTO turmaDTO) {
         try {
             Turma turmaExistente = turmaRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("Turma não encontrada com ID: " + id));
 
-            turmaExistente.setNomeTurma(nomeTurma);
-            turmaExistente.setProfessorResponsavel(professorResponsavel);
-            turmaExistente.setNivelProficiencia(nivelProficiencia);
-            turmaExistente.setDiaTurma(diaTurma);
-            turmaExistente.setTurno(turno);
-            turmaExistente.setFormato(formato);
-            turmaExistente.setModalidade(modalidade);
-            turmaExistente.setRealizador(realizador);
-            turmaExistente.setHoraInicio(horaInicio);
-            turmaExistente.setHoraTermino(horaTermino);
-            turmaExistente.setAnoSemestre(anoSemestre);
-            turmaExistente.setCargaHorariaTotal(cargaHorariaTotal);
-            turmaExistente.setInicioTurma(inicioTurma);
-            turmaExistente.setTerminoTurma(terminoTurma);
-            turmaExistente.setSituacaoTurma(situacaoTurma);
-            // Associação de alunos pode ser feita separadamente
+            turmaExistente.setNomeTurma(turmaDTO.nomeTurma());
+            turmaExistente.setNivelProficiencia(turmaDTO.nivelProficiencia());
+            turmaExistente.setDiaTurma(turmaDTO.diaTurma());
+            turmaExistente.setTurno(turmaDTO.turno());
+            turmaExistente.setFormato(turmaDTO.formato());
+            turmaExistente.setModalidade(turmaDTO.modalidade());
+            turmaExistente.setRealizador(turmaDTO.realizador());
+            turmaExistente.setHoraInicio(turmaDTO.horaInicio());
+            turmaExistente.setHoraTermino(turmaDTO.horaTermino());
+            turmaExistente.setAnoSemestre(turmaDTO.anoSemestre());
+            turmaExistente.setCargaHorariaTotal(turmaDTO.cargaHorariaTotal());
+            turmaExistente.setInicioTurma(turmaDTO.inicioTurma());
+            turmaExistente.setTerminoTurma(turmaDTO.terminoTurma());
+            turmaExistente.setSituacaoTurma(turmaDTO.situacaoTurma());
+
+            if (turmaDTO.professorResponsavelId() != null) {
+                Professor professor = professorRepository.findById(turmaDTO.professorResponsavelId())
+                        .orElseThrow(() -> new RuntimeException("Professor não encontrado com ID: " + turmaDTO.professorResponsavelId()));
+                turmaExistente.setProfessorResponsavel(professor);
+            } else {
+                turmaExistente.setProfessorResponsavel(null);
+            }
+
+            if (turmaDTO.alunoIds() != null && !turmaDTO.alunoIds().isEmpty()) {
+                List<Aluno> alunos = alunoRepository.findAllById(turmaDTO.alunoIds());
+                turmaExistente.setAlunos(alunos);
+            } else {
+                turmaExistente.setAlunos(Collections.emptyList());
+            }
 
             Turma updatedTurma = turmaRepository.save(turmaExistente);
             logger.info("Turma atualizada com ID: {}", updatedTurma.getId());

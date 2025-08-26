@@ -2,7 +2,6 @@ package br.com.arirang.plataforma.controller;
 
 import br.com.arirang.plataforma.dto.TurmaDTO;
 import br.com.arirang.plataforma.entity.Aluno;
-import br.com.arirang.plataforma.entity.Professor;
 import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.service.TurmaService;
 import jakarta.validation.Valid;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,9 +25,9 @@ public class TurmaRestController {
     @Autowired
     private TurmaService turmaService;
 
-    @GetMapping
-    public ResponseEntity<List<TurmaDTO>> listar() {
-        List<TurmaDTO> turmas = turmaService.listarTodasTurmas().stream().map(turma -> new TurmaDTO(
+    // Helper method to convert Turma entity to TurmaDTO
+    private TurmaDTO convertToDTO(Turma turma) {
+        return new TurmaDTO(
                 turma.getId(),
                 turma.getNomeTurma(),
                 turma.getProfessorResponsavel() != null ? turma.getProfessorResponsavel().getId() : null,
@@ -44,33 +44,22 @@ public class TurmaRestController {
                 turma.getInicioTurma(),
                 turma.getTerminoTurma(),
                 turma.getSituacaoTurma(),
-                turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : null
-        )).collect(Collectors.toList());
+                turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : Collections.emptyList()
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TurmaDTO>> listar() {
+        List<TurmaDTO> turmas = turmaService.listarTodasTurmas().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(turmas);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TurmaDTO> buscar(@PathVariable Long id) {
         return turmaService.buscarTurmaPorId(id)
-                .map(turma -> new TurmaDTO(
-                        turma.getId(),
-                        turma.getNomeTurma(),
-                        turma.getProfessorResponsavel() != null ? turma.getProfessorResponsavel().getId() : null,
-                        turma.getNivelProficiencia(),
-                        turma.getDiaTurma(),
-                        turma.getTurno(),
-                        turma.getFormato(),
-                        turma.getModalidade(),
-                        turma.getRealizador(),
-                        turma.getHoraInicio(),
-                        turma.getHoraTermino(),
-                        turma.getAnoSemestre(),
-                        turma.getCargaHorariaTotal(),
-                        turma.getInicioTurma(),
-                        turma.getTerminoTurma(),
-                        turma.getSituacaoTurma(),
-                        turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : null
-                ))
+                .map(this::convertToDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -78,95 +67,25 @@ public class TurmaRestController {
     @PostMapping
     public ResponseEntity<TurmaDTO> criar(@Valid @RequestBody TurmaDTO dto) {
         try {
-            Professor professorResponsavel = dto.professorResponsavelId() != null ? new Professor() {{ setId(dto.professorResponsavelId()); }} : null;
-            Turma turma = turmaService.criarTurma(
-                    dto.nomeTurma(),
-                    professorResponsavel,
-                    dto.nivelProficiencia(),
-                    dto.diaTurma(),
-                    dto.turno(),
-                    dto.formato(),
-                    dto.modalidade(),
-                    dto.realizador(),
-                    dto.horaInicio(),
-                    dto.horaTermino(),
-                    dto.anoSemestre(),
-                    dto.cargaHorariaTotal(),
-                    dto.inicioTurma(),
-                    dto.terminoTurma(),
-                    dto.situacaoTurma(),
-                    dto.alunoIds()
-            );
-            return ResponseEntity.status(HttpStatus.CREATED).body(new TurmaDTO(
-                    turma.getId(),
-                    turma.getNomeTurma(),
-                    turma.getProfessorResponsavel() != null ? turma.getProfessorResponsavel().getId() : null,
-                    turma.getNivelProficiencia(),
-                    turma.getDiaTurma(),
-                    turma.getTurno(),
-                    turma.getFormato(),
-                    turma.getModalidade(),
-                    turma.getRealizador(),
-                    turma.getHoraInicio(),
-                    turma.getHoraTermino(),
-                    turma.getAnoSemestre(),
-                    turma.getCargaHorariaTotal(),
-                    turma.getInicioTurma(),
-                    turma.getTerminoTurma(),
-                    turma.getSituacaoTurma(),
-                    turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : null
-            ));
+            Turma turmaSalva = turmaService.criarTurma(dto); // Simplified call
+            return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(turmaSalva));
         } catch (Exception e) {
-            logger.error("Erro ao criar turma", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Erro ao criar turma via API", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TurmaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody TurmaDTO dto) {
         try {
-            Professor professorResponsavel = dto.professorResponsavelId() != null ? new Professor() {{ setId(dto.professorResponsavelId()); }} : null;
-            Turma turma = turmaService.atualizarTurma(
-                    id,
-                    dto.nomeTurma(),
-                    professorResponsavel,
-                    dto.nivelProficiencia(),
-                    dto.diaTurma(),
-                    dto.turno(),
-                    dto.formato(),
-                    dto.modalidade(),
-                    dto.realizador(),
-                    dto.horaInicio(),
-                    dto.horaTermino(),
-                    dto.anoSemestre(),
-                    dto.cargaHorariaTotal(),
-                    dto.inicioTurma(),
-                    dto.terminoTurma(),
-                    dto.situacaoTurma(),
-                    dto.alunoIds()
-            );
-            return ResponseEntity.ok(new TurmaDTO(
-                    turma.getId(),
-                    turma.getNomeTurma(),
-                    turma.getProfessorResponsavel() != null ? turma.getProfessorResponsavel().getId() : null,
-                    turma.getNivelProficiencia(),
-                    turma.getDiaTurma(),
-                    turma.getTurno(),
-                    turma.getFormato(),
-                    turma.getModalidade(),
-                    turma.getRealizador(),
-                    turma.getHoraInicio(),
-                    turma.getHoraTermino(),
-                    turma.getAnoSemestre(),
-                    turma.getCargaHorariaTotal(),
-                    turma.getInicioTurma(),
-                    turma.getTerminoTurma(),
-                    turma.getSituacaoTurma(),
-                    turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : null
-            ));
+            Turma turmaAtualizada = turmaService.atualizarTurma(id, dto); // Simplified call
+            return ResponseEntity.ok(convertToDTO(turmaAtualizada));
+        } catch (RuntimeException e) {
+            logger.error("Erro ao atualizar turma {} via API: {}", id, e.getMessage());
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            logger.error("Erro ao atualizar turma {}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Erro geral ao atualizar turma {} via API", id, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
@@ -176,10 +95,8 @@ public class TurmaRestController {
             turmaService.deletarTurma(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
-            logger.error("Erro ao deletar turma {}", id, e);
+            logger.error("Erro ao deletar turma {} via API", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
-
-

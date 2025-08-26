@@ -51,7 +51,12 @@
                 <td th:text="${aluno.nomeCompleto}"></td>
                 <td th:text="${aluno.email}"></td>
                 <td th:text="${aluno.telefone}"></td>
-                <td th:text="${#strings.join(aluno.turmaIds, ', ')}"></td>
+                                <td>
+                    <span th:each="turmaId, iterStat : ${aluno.turmaIds}">
+                        <span th:text="${turmaId}"></span>
+                        <span th:if="${!iterStat.last}">, </span>
+                    </span>
+                </td>
                 <td class="acoes">
                     <a th:href="@{/alunos/editar/{id}(id=${aluno.id})}" class="btn editar">Editar</a>
                     <a th:href="@{/alunos/deletar/{id}(id=${aluno.id})}" class="btn deletar">Deletar</a>

@@ -1,45 +1,136 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Formulário de Turma - AriranG</title>
-    <link rel="stylesheet" th:href="@{/css/cadastro.css?v=1.0}" />
+    <meta charset="UTF-8">
+    <title>Turma - Formulário</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" th:href="@{/css/forms.css}" />
+    <link rel="stylesheet" th:href="@{/css/header.css}" />
+    <link rel="stylesheet" th:href="@{/css/home.css?v=1.0}" />
 </head>
 <body>
-<h1>Formulário de Turma</h1>
-<form class="form-root" th:action="@{/turmas}" th:object="${turma}" method="post">
-    <label>Nome da Turma: <input type="text" th:field="*{nomeTurma}" /></label>
-    <div th:if="${#fields.hasErrors('nomeTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{nomeTurma}"></div><br/>
-    <label>Professor Responsável ID: <input type="number" th:field="*{professorResponsavelId}" /></label><br/>
-    <label>Nível de Proficiência: <input type="text" th:field="*{nivelProficiencia}" /></label>
-    <div th:if="${#fields.hasErrors('nivelProficiencia')}" style="color:#b00020;font-size:.9rem" th:errors="*{nivelProficiencia}"></div><br/>
-    <label>Dia da Turma: <input type="text" th:field="*{diaTurma}" /></label>
-    <div th:if="${#fields.hasErrors('diaTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{diaTurma}"></div><br/>
-    <label>Turno: <input type="text" th:field="*{turno}" /></label>
-    <div th:if="${#fields.hasErrors('turno')}" style="color:#b00020;font-size:.9rem" th:errors="*{turno}"></div><br/>
-    <label>Formato: <input type="text" th:field="*{formato}" /></label>
-    <div th:if="${#fields.hasErrors('formato')}" style="color:#b00020;font-size:.9rem" th:errors="*{formato}"></div><br/>
-    <label>Modalidade: <input type="text" th:field="*{modalidade}" /></label>
-    <div th:if="${#fields.hasErrors('modalidade')}" style="color:#b00020;font-size:.9rem" th:errors="*{modalidade}"></div><br/>
-    <label>Realizador: <input type="text" th:field="*{realizador}" /></label>
-    <div th:if="${#fields.hasErrors('realizador')}" style="color:#b00020;font-size:.9rem" th:errors="*{realizador}"></div><br/>
-    <label>Hora Início: <input type="time" th:field="*{horaInicio}" /></label>
-    <div th:if="${#fields.hasErrors('horaInicio')}" style="color:#b00020;font-size:.9rem" th:errors="*{horaInicio}"></div><br/>
-    <label>Hora Término: <input type="time" th:field="*{horaTermino}" /></label>
-    <div th:if="${#fields.hasErrors('horaTermino')}" style="color:#b00020;font-size:.9rem" th:errors="*{horaTermino}"></div><br/>
-    <label>Ano/Semestre: <input type="text" th:field="*{anoSemestre}" /></label>
-    <div th:if="${#fields.hasErrors('anoSemestre')}" style="color:#b00020;font-size:.9rem" th:errors="*{anoSemestre}"></div><br/>
-    <label>Carga Horária Total: <input type="number" th:field="*{cargaHorariaTotal}" /></label>
-    <div th:if="${#fields.hasErrors('cargaHorariaTotal')}" style="color:#b00020;font-size:.9rem" th:errors="*{cargaHorariaTotal}"></div><br/>
-    <label>Início da Turma: <input type="date" th:field="*{inicioTurma}" /></label>
-    <div th:if="${#fields.hasErrors('inicioTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{inicioTurma}"></div><br/>
-    <label>Término da Turma: <input type="date" th:field="*{terminoTurma}" /></label>
-    <div th:if="${#fields.hasErrors('terminoTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{terminoTurma}"></div><br/>
-    <label>Situação da Turma: <input type="text" th:field="*{situacaoTurma}" /></label>
-    <div th:if="${#fields.hasErrors('situacaoTurma')}" style="color:#b00020;font-size:.9rem" th:errors="*{situacaoTurma}"></div><br/>
+<div class="slider-thumb"></div>
+<div class="main-nav" style="margin-bottom: 1rem;">
+    <div class="logo">
+        <a th:href="@{/}"><img th:src="@{/img/horizontal_negativa.png}" alt="Logo" /></a>
+    </div>
+    <nav>
+        <ul class="nav-list">
+            <a th:href="@{/}"><li class="nav-element">Home</li></a>
+            <a th:href="@{/alunos/lista}"><li class="nav-element">Alunos</li></a>
+            <a th:href="@{/turmas}"><li class="nav-element active">Turmas</li></a>
+            <a th:href="@{/cadastro}"><li class="nav-element">Cadastro</li></a>
+        </ul>
+    </nav>
+</div>
+
+<div class="page-container">
+<div class="form-card">
+<h2 style="margin-top:0">Turma</h2>
+<form class="form-root" th:object="${turma}" th:action="${isNew} ? @{/turmas} : @{/turmas/atualizar/{id}(id=${turma.id})}" method="post">
+    <input type="hidden" th:if="*{id}" th:field="*{id}" />
+
+    <div class="row">
+        <div class="field">
+            <label>Nome da Turma</label>
+            <input th:field="*{nomeTurma}" placeholder="Nome da Turma" required>
+            <div th:if="${#fields.hasErrors('nomeTurma')}" class="field-error" th:errors="*{nomeTurma}"></div>
+        </div>
+        <div class="field">
+            <label>Professor Responsável ID</label>
+            <input type="number" th:field="*{professorResponsavelId}" placeholder="ID do Professor">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Nível de Proficiência</label>
+            <input th:field="*{nivelProficiencia}" placeholder="Nível">
+            <div th:if="${#fields.hasErrors('nivelProficiencia')}" class="field-error" th:errors="*{nivelProficiencia}"></div>
+        </div>
+        <div class="field">
+            <label>Dia da Turma</label>
+            <input th:field="*{diaTurma}" placeholder="Dia da Semana">
+            <div th:if="${#fields.hasErrors('diaTurma')}" class="field-error" th:errors="*{diaTurma}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Turno</label>
+            <input th:field="*{turno}" placeholder="Manhã/Tarde/Noite">
+            <div th:if="${#fields.hasErrors('turno')}" class="field-error" th:errors="*{turno}"></div>
+        </div>
+        <div class="field">
+            <label>Formato</label>
+            <input th:field="*{formato}" placeholder="Online/Presencial">
+            <div th:if="${#fields.hasErrors('formato')}" class="field-error" th:errors="*{formato}"></div>
+        </div>
+        <div class="field">
+            <label>Modalidade</label>
+            <input th:field="*{modalidade}" placeholder="Modalidade">
+            <div th:if="${#fields.hasErrors('modalidade')}" class="field-error" th:errors="*{modalidade}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Realizador</label>
+            <input th:field="*{realizador}" placeholder="Realizador">
+            <div th:if="${#fields.hasErrors('realizador')}" class="field-error" th:errors="*{realizador}"></div>
+        </div>
+        <div class="field">
+            <label>Ano/Semestre</label>
+            <input th:field="*{anoSemestre}" placeholder="AAAA/S">
+            <div th:if="${#fields.hasErrors('anoSemestre')}" class="field-error" th:errors="*{anoSemestre}"></div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="field">
+            <label>Hora Início</label>
+            <input type="time" th:field="*{horaInicio}">
+            <div th:if="${#fields.hasErrors('horaInicio')}" class="field-error" th:errors="*{horaInicio}"></div>
+        </div>
+        <div class="field">
+            <label>Hora Término</label>
+            <input type="time" th:field="*{horaTermino}">
+            <div th:if="${#fields.hasErrors('horaTermino')}" class="field-error" th:errors="*{horaTermino}"></div>
+        </div>
+        <div class="field">
+            <label>Carga Horária Total</label>
+            <input type="number" th:field="*{cargaHorariaTotal}" placeholder="Horas">
+            <div th:if="${#fields.hasErrors('cargaHorariaTotal')}" class="field-error" th:errors="*{cargaHorariaTotal}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Início da Turma</label>
+            <input type="date" th:field="*{inicioTurma}">
+            <div th:if="${#fields.hasErrors('inicioTurma')}" class="field-error" th:errors="*{inicioTurma}"></div>
+        </div>
+        <div class="field">
+            <label>Término da Turma</label>
+            <input type="date" th:field="*{terminoTurma}">
+            <div th:if="${#fields.hasErrors('terminoTurma')}" class="field-error" th:errors="*{terminoTurma}"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="field">
+            <label>Situação da Turma</label>
+            <input th:field="*{situacaoTurma}" placeholder="Situação">
+            <div th:if="${#fields.hasErrors('situacaoTurma')}" class="field-error" th:errors="*{situacaoTurma}"></div>
+        </div>
+    </div>
 
     <div class="actions">
         <button type="submit" class="btn-primary">Salvar</button>
-        <a th:href="@{/turmas}" class="btn-secondary">Cancelar</a>
+        <a href="/turmas" class="btn-secondary">Cancelar</a>
     </div>
+</form>
+</div>
+</div>
+</body>
+</html>

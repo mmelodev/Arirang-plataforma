@@ -2,7 +2,7 @@ package br.com.arirang.plataforma.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -12,22 +12,52 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "nome_completo", nullable = false, length = 150)
     private String nomeCompleto;
+
+    @Column(name = "email", nullable = true, length = 150)
     private String email;
+
+    @Column(name = "cpf", nullable = true, length = 14)
     private String cpf;
+
+    @Column(name = "rg", nullable = true, length = 20)
     private String rg;
+
+    @Column(name = "orgao_expeditor_rg", nullable = true, length = 50)
     private String orgaoExpeditorRg;
+
+    @Column(name = "nacionalidade", nullable = true, length = 60)
     private String nacionalidade;
+
+    @Column(name = "uf", nullable = true, length = 2)
     private String uf;
+
+    @Column(name = "telefone", nullable = true, length = 20)
     private String telefone;
-    private LocalDateTime dataNascimento;
+
+    @Column(name = "data_nascimento", nullable = false)
+    private LocalDate dataNascimento;
+
+    @Column(name = "nome_social", nullable = true, length = 150)
     private String nomeSocial;
+
+    @Column(name = "genero", nullable = true, length = 30)
     private String genero;
+
+    @Column(name = "situacao", nullable = true, length = 30)
     private String situacao;
+
+    @Column(name = "ultimo_nivel", nullable = true, length = 60)
     private String ultimoNivel;
+
     @Embedded
     private Endereco endereco;
+
+    @Column(name = "grau_parentesco", nullable = true, length = 60)
     private String grauParentesco;
+
+    @Column(name = "responsavel_financeiro", nullable = false)
     private boolean responsavelFinanceiro;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,8 +91,8 @@ public class Aluno {
     public void setUf(String uf) { this.uf = uf; }
     public String getTelefone() { return telefone; }
     public void setTelefone(String telefone) { this.telefone = telefone; }
-    public LocalDateTime getDataNascimento() { return dataNascimento; }
-    public void setDataNascimento(LocalDateTime dataNascimento) { this.dataNascimento = dataNascimento; }
+    public LocalDate getDataNascimento() { return dataNascimento; }
+    public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
     public String getNomeSocial() { return nomeSocial; }
     public void setNomeSocial(String nomeSocial) { this.nomeSocial = nomeSocial; }
     public String getGenero() { return genero; }

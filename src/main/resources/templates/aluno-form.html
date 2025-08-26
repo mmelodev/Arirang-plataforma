@@ -27,7 +27,8 @@
 <div class="page-container">
 <div class="form-card">
 <h2 style="margin-top:0">Aluno</h2>
-<form class="form-root" th:object="${aluno}" th:action="@{/alunos}" method="post">
+    <form class="form-root" method="post"
+          th:action="${isNew} ? @{/alunos} : @{/alunos/atualizar/{id}(id=${aluno.id})}" th:object="${aluno}">
     <input type="hidden" th:if="*{id}" th:field="*{id}" />
 
     <div class="row">
