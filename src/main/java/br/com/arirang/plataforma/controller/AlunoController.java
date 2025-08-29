@@ -120,6 +120,28 @@ public class AlunoController {
     public String atualizarAlunoMVC(@PathVariable Long id, @Valid @ModelAttribute("aluno") AlunoDTO alunoAtualizado, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("isNew", false);
+            alunoAtualizado = new AlunoDTO(
+                id,
+                alunoAtualizado.nomeCompleto(),
+                alunoAtualizado.email(),
+                alunoAtualizado.cpf(),
+                alunoAtualizado.rg(),
+                alunoAtualizado.orgaoExpeditorRg(),
+                alunoAtualizado.nacionalidade(),
+                alunoAtualizado.uf(),
+                alunoAtualizado.telefone(),
+                alunoAtualizado.dataNascimento(),
+                alunoAtualizado.nomeSocial(),
+                alunoAtualizado.genero(),
+                alunoAtualizado.situacao(),
+                alunoAtualizado.ultimoNivel(),
+                alunoAtualizado.endereco(),
+                alunoAtualizado.responsavelId(),
+                alunoAtualizado.grauParentesco(),
+                alunoAtualizado.responsavelFinanceiro(),
+                alunoAtualizado.turmaIds()
+            );
+            model.addAttribute("aluno", alunoAtualizado);
             return "aluno-form";
         }
         try {
@@ -129,7 +151,27 @@ public class AlunoController {
             logger.error("Erro ao atualizar aluno com ID {}: ", id, e);
             model.addAttribute("error", "Erro ao atualizar aluno: " + e.getMessage());
             model.addAttribute("isNew", false);
-            // Add the object back to the model to preserve user input
+            alunoAtualizado = new AlunoDTO(
+                id,
+                alunoAtualizado.nomeCompleto(),
+                alunoAtualizado.email(),
+                alunoAtualizado.cpf(),
+                alunoAtualizado.rg(),
+                alunoAtualizado.orgaoExpeditorRg(),
+                alunoAtualizado.nacionalidade(),
+                alunoAtualizado.uf(),
+                alunoAtualizado.telefone(),
+                alunoAtualizado.dataNascimento(),
+                alunoAtualizado.nomeSocial(),
+                alunoAtualizado.genero(),
+                alunoAtualizado.situacao(),
+                alunoAtualizado.ultimoNivel(),
+                alunoAtualizado.endereco(),
+                alunoAtualizado.responsavelId(),
+                alunoAtualizado.grauParentesco(),
+                alunoAtualizado.responsavelFinanceiro(),
+                alunoAtualizado.turmaIds()
+            );
             model.addAttribute("aluno", alunoAtualizado);
             return "aluno-form";
         }
