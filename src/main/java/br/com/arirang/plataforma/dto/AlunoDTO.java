@@ -46,7 +46,6 @@ public record AlunoDTO(
 		@Size(max = 60)
 		String grauParentesco,
 		boolean responsavelFinanceiro,
-		@NotNull(message = "Pelo menos uma turma deve ser informada")
 		List<Long> turmaIds
 ) {
 	public Aluno toEntity() {

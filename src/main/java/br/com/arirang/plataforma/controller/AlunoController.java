@@ -80,6 +80,7 @@ public class AlunoController {
                 null, "", false, Collections.emptyList()
         ));
         model.addAttribute("isNew", true);
+        model.addAttribute("turmas", turmaService.listarTodasTurmas()); // Adicionado
         return "aluno-form";
     }
 
@@ -108,11 +109,12 @@ public class AlunoController {
                     .orElseThrow(() -> new RuntimeException("Aluno não encontrado com ID: " + id));
             model.addAttribute("aluno", aluno);
             model.addAttribute("isNew", false);
+            model.addAttribute("turmas", turmaService.listarTodasTurmas()); // Adicionado
             return "aluno-form";
         } catch (Exception e) {
             logger.error("Erro ao carregar formulário de edição para ID {}: ", id, e);
             model.addAttribute("error", "Erro ao carregar o formulário: " + e.getMessage());
-            return "error"; // Redirect to a generic error page
+            return "error";
         }
     }
 
@@ -120,28 +122,6 @@ public class AlunoController {
     public String atualizarAlunoMVC(@PathVariable Long id, @Valid @ModelAttribute("aluno") AlunoDTO alunoAtualizado, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("isNew", false);
-            alunoAtualizado = new AlunoDTO(
-                id,
-                alunoAtualizado.nomeCompleto(),
-                alunoAtualizado.email(),
-                alunoAtualizado.cpf(),
-                alunoAtualizado.rg(),
-                alunoAtualizado.orgaoExpeditorRg(),
-                alunoAtualizado.nacionalidade(),
-                alunoAtualizado.uf(),
-                alunoAtualizado.telefone(),
-                alunoAtualizado.dataNascimento(),
-                alunoAtualizado.nomeSocial(),
-                alunoAtualizado.genero(),
-                alunoAtualizado.situacao(),
-                alunoAtualizado.ultimoNivel(),
-                alunoAtualizado.endereco(),
-                alunoAtualizado.responsavelId(),
-                alunoAtualizado.grauParentesco(),
-                alunoAtualizado.responsavelFinanceiro(),
-                alunoAtualizado.turmaIds()
-            );
-            model.addAttribute("aluno", alunoAtualizado);
             return "aluno-form";
         }
         try {
@@ -151,28 +131,6 @@ public class AlunoController {
             logger.error("Erro ao atualizar aluno com ID {}: ", id, e);
             model.addAttribute("error", "Erro ao atualizar aluno: " + e.getMessage());
             model.addAttribute("isNew", false);
-            alunoAtualizado = new AlunoDTO(
-                id,
-                alunoAtualizado.nomeCompleto(),
-                alunoAtualizado.email(),
-                alunoAtualizado.cpf(),
-                alunoAtualizado.rg(),
-                alunoAtualizado.orgaoExpeditorRg(),
-                alunoAtualizado.nacionalidade(),
-                alunoAtualizado.uf(),
-                alunoAtualizado.telefone(),
-                alunoAtualizado.dataNascimento(),
-                alunoAtualizado.nomeSocial(),
-                alunoAtualizado.genero(),
-                alunoAtualizado.situacao(),
-                alunoAtualizado.ultimoNivel(),
-                alunoAtualizado.endereco(),
-                alunoAtualizado.responsavelId(),
-                alunoAtualizado.grauParentesco(),
-                alunoAtualizado.responsavelFinanceiro(),
-                alunoAtualizado.turmaIds()
-            );
-            model.addAttribute("aluno", alunoAtualizado);
             return "aluno-form";
         }
     }

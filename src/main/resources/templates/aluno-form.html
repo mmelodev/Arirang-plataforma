@@ -25,124 +25,170 @@
 </div>
 
 <div class="page-container">
-<div class="form-card">
-<h2 style="margin-top:0">Aluno</h2>
-    <form class="form-root" method="post"
-          th:action="${isNew} ? @{/alunos} : @{/alunos/atualizar/{id}(id=${aluno.id})}" th:object="${aluno}">
-    <input type="hidden" th:if="*{id}" th:field="*{id}" />
+    <div class="form-card">
+        <h2 style="margin-top:0">Aluno</h2>
+        <div th:if="${error}" class="error-message" th:text="${error}"></div>
+        <form class="form-root" method="post" th:action="@{${isNew} ? {/alunos} : {/alunos/atualizar/{id}(id=${aluno.id})}}" th:object="${aluno}">
+            <input type="hidden" th:field="*{id}" />
 
-    <div class="row">
-        <div class="field">
-            <label>Nome completo</label>
-            <input th:field="*{nomeCompleto}" placeholder="Nome" required>
-            <div th:if="${#fields.hasErrors('nomeCompleto')}" class="field-error" th:errors="*{nomeCompleto}"></div>
-        </div>
-        <div class="field">
-            <label>Email</label>
-            <input th:field="*{email}" type="email" placeholder="email@exemplo.com">
-            <div th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></div>
-        </div>
-    </div>
+            <div class="row">
+                <div class="field">
+                    <label>Nome completo</label>
+                    <input th:field="*{nomeCompleto}" placeholder="Nome" required>
+                    <div th:if="${#fields.hasErrors('nomeCompleto')}" class="field-error" th:errors="*{nomeCompleto}"></div>
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input th:field="*{email}" type="email" placeholder="email@exemplo.com">
+                    <div th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="field">
-            <label>Telefone</label>
-            <input th:field="*{telefone}" placeholder="(00) 00000-0000">
-            <div th:if="${#fields.hasErrors('telefone')}" class="field-error" th:errors="*{telefone}"></div>
-        </div>
-        <div class="field">
-            <label>CPF</label>
-            <input th:field="*{cpf}" placeholder="000.000.000-00">
-            <div th:if="${#fields.hasErrors('cpf')}" class="field-error" th:errors="*{cpf}"></div>
-        </div>
-    </div>
+            <div class="row">
+                <div class="field">
+                    <label>Telefone</label>
+                    <input th:field="*{telefone}" placeholder="(00) 00000-0000">
+                    <div th:if="${#fields.hasErrors('telefone')}" class="field-error" th:errors="*{telefone}"></div>
+                </div>
+                <div class="field">
+                    <label>CPF</label>
+                    <input th:field="*{cpf}" placeholder="000.000.000-00">
+                    <div th:if="${#fields.hasErrors('cpf')}" class="field-error" th:errors="*{cpf}"></div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="field">
-            <label>RG</label>
-            <input th:field="*{rg}">
-        </div>
-        <div class="field">
-            <label>Órgão Expedidor</label>
-            <input th:field="*{orgaoExpeditorRg}">
-        </div>
-    </div>
+            <div class="row">
+                <div class="field">
+                    <label>RG</label>
+                    <input th:field="*{rg}">
+                    <div th:if="${#fields.hasErrors('rg')}" class="field-error" th:errors="*{rg}"></div>
+                </div>
+                <div class="field">
+                    <label>Órgão Expedidor</label>
+                    <input th:field="*{orgaoExpeditorRg}">
+                    <div th:if="${#fields.hasErrors('orgaoExpeditorRg')}" class="field-error" th:errors="*{orgaoExpeditorRg}"></div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="field">
-            <label>Nacionalidade</label>
-            <input th:field="*{nacionalidade}">
-        </div>
-        <div class="field">
-            <label>UF</label>
-            <input th:field="*{uf}" maxlength="2">
-        </div>
-        <div class="field">
-            <label>Data de Nascimento</label>
-            <input th:field="*{dataNascimento}" type="date">
-        </div>
-    </div>
+            <div class="row">
+                <div class="field">
+                    <label>Nacionalidade</label>
+                    <input th:field="*{nacionalidade}">
+                    <div th:if="${#fields.hasErrors('nacionalidade')}" class="field-error" th:errors="*{nacionalidade}"></div>
+                </div>
+                <div class="field">
+                    <label>UF</label>
+                    <input th:field="*{uf}" maxlength="2">
+                    <div th:if="${#fields.hasErrors('uf')}" class="field-error" th:errors="*{uf}"></div>
+                </div>
+                <div class="field">
+                    <label>Data de Nascimento</label>
+                    <input th:field="*{dataNascimento}" type="date" required>
+                    <div th:if="${#fields.hasErrors('dataNascimento')}" class="field-error" th:errors="*{dataNascimento}"></div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="field">
-            <label>Nome Social</label>
-            <input th:field="*{nomeSocial}">
-        </div>
-        <div class="field">
-            <label>Gênero</label>
-            <input th:field="*{genero}">
-        </div>
-    </div>
+            <div class="row">
+                <div class="field">
+                    <label>Nome Social</label>
+                    <input th:field="*{nomeSocial}">
+                    <div th:if="${#fields.hasErrors('nomeSocial')}" class="field-error" th:errors="*{nomeSocial}"></div>
+                </div>
+                <div class="field">
+                    <label>Gênero</label>
+                    <input th:field="*{genero}">
+                    <div th:if="${#fields.hasErrors('genero')}" class="field-error" th:errors="*{genero}"></div>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="field">
-            <label>Situação</label>
-            <input th:field="*{situacao}">
-        </div>
-        <div class="field">
-            <label>Último Nível</label>
-            <input th:field="*{ultimoNivel}">
-        </div>
-    </div>
+            <div class="row">
+                <div class="field">
+                    <label>Situação</label>
+                    <input th:field="*{situacao}">
+                    <div th:if="${#fields.hasErrors('situacao')}" class="field-error" th:errors="*{situacao}"></div>
+                </div>
+                <div class="field">
+                    <label>Último Nível</label>
+                    <input th:field="*{ultimoNivel}">
+                    <div th:if="${#fields.hasErrors('ultimoNivel')}" class="field-error" th:errors="*{ultimoNivel}"></div>
+                </div>
+            </div>
 
-    <h3>Endereço</h3>
-    <div class="row">
-        <div class="field">
-            <label>Rua</label>
-            <input th:field="*{endereco.rua}">
-        </div>
-        <div class="field">
-            <label>Número</label>
-            <input th:field="*{endereco.numero}">
-        </div>
-        <div class="field">
-            <label>Bairro</label>
-            <input th:field="*{endereco.bairro}">
-        </div>
-    </div>
-    <div class="row">
-        <div class="field">
-            <label>Complemento</label>
-            <input th:field="*{endereco.complemento}">
-        </div>
-        <div class="field">
-            <label>CEP</label>
-            <input th:field="*{endereco.cep}">
-        </div>
-        <div class="field">
-            <label>Cidade</label>
-            <input th:field="*{endereco.cidade}">
-        </div>
-    </div>
+            <h3>Endereço</h3>
+            <div class="row">
+                <div class="field">
+                    <label>Rua</label>
+                    <input th:field="*{endereco.rua}" required>
+                    <div th:if="${#fields.hasErrors('endereco.rua')}" class="field-error" th:errors="*{endereco.rua}"></div>
+                </div>
+                <div class="field">
+                    <label>Número</label>
+                    <input th:field="*{endereco.numero}" required>
+                    <div th:if="${#fields.hasErrors('endereco.numero')}" class="field-error" th:errors="*{endereco.numero}"></div>
+                </div>
+                <div class="field">
+                    <label>Bairro</label>
+                    <input th:field="*{endereco.bairro}" required>
+                    <div th:if="${#fields.hasErrors('endereco.bairro')}" class="field-error" th:errors="*{endereco.bairro}"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>Complemento</label>
+                    <input th:field="*{endereco.complemento}">
+                    <div th:if="${#fields.hasErrors('endereco.complemento')}" class="field-error" th:errors="*{endereco.complemento}"></div>
+                </div>
+                <div class="field">
+                    <label>CEP</label>
+                    <input th:field="*{endereco.cep}" required>
+                    <div th:if="${#fields.hasErrors('endereco.cep')}" class="field-error" th:errors="*{endereco.cep}"></div>
+                </div>
+                <div class="field">
+                    <label>Cidade</label>
+                    <input th:field="*{endereco.cidade}" required>
+                    <div th:if="${#fields.hasErrors('endereco.cidade')}" class="field-error" th:errors="*{endereco.cidade}"></div>
+                </div>
+            </div>
 
-    <div class="actions">
-        <button type="submit" class="btn-primary">Salvar</button>
-        <a href="/alunos/lista" class="btn-secondary">Cancelar</a>
+            <div class="row">
+                <div class="field">
+                    <label>Responsável ID</label>
+                    <input th:field="*{responsavelId}" type="number">
+                    <div th:if="${#fields.hasErrors('responsavelId')}" class="field-error" th:errors="*{responsavelId}"></div>
+                </div>
+                <div class="field">
+                    <label>Grau de Parentesco</label>
+                    <input th:field="*{grauParentesco}">
+                    <div th:if="${#fields.hasErrors('grauParentesco')}" class="field-error" th:errors="*{grauParentesco}"></div>
+                </div>
+                <div class="field">
+                    <label>Responsável Financeiro</label>
+                    <input th:field="*{responsavelFinanceiro}" type="checkbox">
+                    <div th:if="${#fields.hasErrors('responsavelFinanceiro')}" class="field-error" th:errors="*{responsavelFinanceiro}"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label>Turmas</label>
+                    <select th:field="*{turmaIds}" multiple>
+                        <option th:each="turma : ${turmas}"
+                                th:value="${turma.id}"
+                                th:text="${turma.nomeTurma}"
+                                th:unless="${turmas == null or #lists.isEmpty(turmas)}">
+                        </option>
+                        <option th:if="${turmas == null or #lists.isEmpty(turmas)}" value="" disabled>Sem turmas disponíveis</option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('turmaIds')}" class="field-error" th:errors="*{turmaIds}"></div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="btn-primary">Salvar</button>
+                <a href="/alunos/lista" class="btn-secondary">Cancelar</a>
+            </div>
+        </form>
     </div>
-</form>
-</div>
 </div>
 </body>
 </html>
-
-
