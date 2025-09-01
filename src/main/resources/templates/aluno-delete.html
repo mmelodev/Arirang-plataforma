@@ -11,11 +11,13 @@
         .actions { margin-top: 1rem; display: flex; gap: .75rem; }
         button { padding: .5rem 1rem; border: none; border-radius: 4px; background: #d32f2f; color: #fff; cursor: pointer; }
         a.button { background: #777; color: #fff; padding: .5rem 1rem; border-radius: 4px; text-decoration: none; }
+        .error { color: red; margin-top: 1rem; }
     </style>
 </head>
 <body>
 <div class="card">
     <div>Tem certeza que deseja excluir o aluno <span class="name" th:text="${aluno.nomeCompleto}">Aluno</span>?</div>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
     <div class="actions">
         <form th:action="@{'/alunos/' + ${aluno.id}}" method="post">
             <input type="hidden" name="_method" value="delete" />
@@ -26,5 +28,3 @@
 </div>
 </body>
 </html>
-
-

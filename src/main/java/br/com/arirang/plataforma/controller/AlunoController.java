@@ -34,24 +34,14 @@ public class AlunoController {
 
     private AlunoDTO convertToDTO(Aluno aluno) {
         return new AlunoDTO(
-                aluno.getId(),
-                aluno.getNomeCompleto(),
-                aluno.getEmail(),
-                aluno.getCpf(),
-                aluno.getRg(),
-                aluno.getOrgaoExpeditorRg(),
-                aluno.getNacionalidade(),
-                aluno.getUf(),
-                aluno.getTelefone(),
-                aluno.getDataNascimento(), // Direct LocalDate
-                aluno.getNomeSocial(),
-                aluno.getGenero(),
-                aluno.getSituacao(),
-                aluno.getUltimoNivel(),
-                aluno.getEndereco(),
-                aluno.getResponsavel() != null ? aluno.getResponsavel().getId() : null,
-                aluno.getGrauParentesco(),
-                aluno.isResponsavelFinanceiro(),
+                aluno.getId(), aluno.getNomeCompleto(), aluno.getEmail(), aluno.getCpf(), aluno.getRg(),
+                aluno.getOrgaoExpeditorRg(), aluno.getNacionalidade(), aluno.getUf(), aluno.getTelefone(),
+                aluno.getDataNascimento(), aluno.getNomeSocial(), aluno.getGenero(), aluno.getSituacao(),
+                aluno.getUltimoNivel(), aluno.getEndereco(), aluno.getGrauParentesco(), aluno.isResponsavelFinanceiro(),
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getNomeCompleto() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getCpf() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getTelefone() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getEmail() : null,
                 aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : Collections.emptyList()
         );
     }
@@ -73,14 +63,31 @@ public class AlunoController {
     @GetMapping("/novo")
     public String novoAlunoForm(Model model) {
         model.addAttribute("aluno", new AlunoDTO(
-                null, "", "", "", "", "", "", "", "",
-                LocalDate.now(),
-                "", "", "", "",
-                new Endereco(),
-                null, "", false, Collections.emptyList()
+                null,                        // id
+                "",                          // nomeCompleto
+                "",                          // email
+                "",                          // cpf
+                "",                          // rg
+                "",                          // orgaoExpeditorRg
+                "",                          // nacionalidade
+                "",                          // uf
+                "",                          // telefone
+                LocalDate.now(),             // dataNascimento
+                "",                          // nomeSocial
+                "",                          // genero
+                "",                          // situacao
+                "",                          // ultimoNivel
+                new Endereco(),              // endereco
+                "",                          // grauParentesco
+                false,                       // responsavelFinanceiro
+                null,                        // nomeResponsavel
+                null,                        // cpfResponsavel
+                null,                        // telefoneResponsavel
+                null,                        // emailResponsavel
+                Collections.emptyList()      // turmaIds
         ));
         model.addAttribute("isNew", true);
-        model.addAttribute("turmas", turmaService.listarTodasTurmas()); // Adicionado
+        model.addAttribute("turmas", turmaService.listarTodasTurmas());
         return "aluno-form";
     }
 
@@ -88,15 +95,18 @@ public class AlunoController {
     public String criarAlunoMVC(@Valid @ModelAttribute("aluno") AlunoDTO novoAluno, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("isNew", true);
+            model.addAttribute("turmas", turmaService.listarTodasTurmas());
             return "aluno-form";
         }
         try {
+            logger.debug("Criando aluno com DTO: {}", novoAluno);
             alunoService.criarAluno(novoAluno);
             return "redirect:/alunos/lista";
         } catch (Exception e) {
             logger.error("Erro ao criar aluno: ", e);
             model.addAttribute("error", "Erro ao criar aluno: " + e.getMessage());
             model.addAttribute("isNew", true);
+            model.addAttribute("turmas", turmaService.listarTodasTurmas());
             return "aluno-form";
         }
     }
@@ -109,7 +119,7 @@ public class AlunoController {
                     .orElseThrow(() -> new RuntimeException("Aluno não encontrado com ID: " + id));
             model.addAttribute("aluno", aluno);
             model.addAttribute("isNew", false);
-            model.addAttribute("turmas", turmaService.listarTodasTurmas()); // Adicionado
+            model.addAttribute("turmas", turmaService.listarTodasTurmas());
             return "aluno-form";
         } catch (Exception e) {
             logger.error("Erro ao carregar formulário de edição para ID {}: ", id, e);
@@ -122,15 +132,18 @@ public class AlunoController {
     public String atualizarAlunoMVC(@PathVariable Long id, @Valid @ModelAttribute("aluno") AlunoDTO alunoAtualizado, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("isNew", false);
+            model.addAttribute("turmas", turmaService.listarTodasTurmas());
             return "aluno-form";
         }
         try {
+            logger.debug("Atualizando aluno ID {} com DTO: {}", id, alunoAtualizado);
             alunoService.atualizarAluno(id, alunoAtualizado);
             return "redirect:/alunos/lista";
         } catch (Exception e) {
             logger.error("Erro ao atualizar aluno com ID {}: ", id, e);
             model.addAttribute("error", "Erro ao atualizar aluno: " + e.getMessage());
             model.addAttribute("isNew", false);
+            model.addAttribute("turmas", turmaService.listarTodasTurmas());
             return "aluno-form";
         }
     }
@@ -147,6 +160,19 @@ public class AlunoController {
             logger.error("Erro ao carregar confirmação de deleção para ID {}: ", id, e);
             model.addAttribute("error", "Erro ao carregar a confirmação: " + e.getMessage());
             return "error";
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public String deletarAluno(@PathVariable Long id, Model model) {
+        try {
+            logger.debug("Deletando aluno com ID: {}", id);
+            alunoService.deletarAluno(id);
+            return "redirect:/alunos/lista";
+        } catch (Exception e) {
+            logger.error("Erro ao deletar aluno com ID {}: ", id, e);
+            model.addAttribute("error", "Erro ao deletar aluno: " + e.getMessage());
+            return "aluno-delete"; // Retorna à página de confirmação com erro
         }
     }
 
@@ -187,4 +213,6 @@ public class AlunoController {
         }
         return "redirect:/alunos/lista";
     }
+
+
 }

@@ -51,29 +51,32 @@ public class TurmaController {
                 turma.getAlunos() != null ? turma.getAlunos().stream().map(Aluno::getId).collect(Collectors.toList()) : Collections.emptyList()
         );
     }
-    
+
     // Helper method to convert Aluno entity to AlunoDTO
     private AlunoDTO convertAlunoToDTO(Aluno aluno) {
         return new AlunoDTO(
-            aluno.getId(),
-            aluno.getNomeCompleto(),
-            aluno.getEmail(),
-            aluno.getCpf(),
-            aluno.getRg(),
-            aluno.getOrgaoExpeditorRg(),
-            aluno.getNacionalidade(),
-            aluno.getUf(),
-            aluno.getTelefone(),
-            aluno.getDataNascimento(),
-            aluno.getNomeSocial(),
-            aluno.getGenero(),
-            aluno.getSituacao(),
-            aluno.getUltimoNivel(),
-            aluno.getEndereco(),
-            aluno.getResponsavel() != null ? aluno.getResponsavel().getId() : null,
-            aluno.getGrauParentesco(),
-            aluno.isResponsavelFinanceiro(),
-            Collections.emptyList() // Avoid infinite loop
+                aluno.getId(),
+                aluno.getNomeCompleto(),
+                aluno.getEmail(),
+                aluno.getCpf(),
+                aluno.getRg(),
+                aluno.getOrgaoExpeditorRg(),
+                aluno.getNacionalidade(),
+                aluno.getUf(),
+                aluno.getTelefone(),
+                aluno.getDataNascimento(),
+                aluno.getNomeSocial(),
+                aluno.getGenero(),
+                aluno.getSituacao(),
+                aluno.getUltimoNivel(),
+                aluno.getEndereco(),
+                aluno.getGrauParentesco(),
+                aluno.isResponsavelFinanceiro(),
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getNomeCompleto() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getCpf() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getTelefone() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getEmail() : null,
+                aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : Collections.emptyList()
         );
     }
 

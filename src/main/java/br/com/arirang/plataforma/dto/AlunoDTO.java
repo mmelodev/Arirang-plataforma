@@ -42,10 +42,18 @@ public record AlunoDTO(
 		String ultimoNivel,
 		@NotNull(message = "Endereço é obrigatório")
 		Endereco endereco,
-		Long responsavelId,
 		@Size(max = 60)
 		String grauParentesco,
 		boolean responsavelFinanceiro,
+		@Size(max = 150)
+		String nomeResponsavel,
+		@Size(max = 14, message = "CPF do responsável deve ter no máximo 14 caracteres")
+		String cpfResponsavel,
+		@Size(max = 20)
+		String telefoneResponsavel,
+		@Email(message = "Email do responsável inválido")
+		@Size(max = 150, message = "Email do responsável deve ter no máximo 150 caracteres")
+		String emailResponsavel,
 		List<Long> turmaIds
 ) {
 	public Aluno toEntity() {
@@ -65,7 +73,7 @@ public record AlunoDTO(
 		aluno.setSituacao(this.situacao);
 		aluno.setUltimoNivel(this.ultimoNivel);
 		aluno.setEndereco(this.endereco);
-		// Configurar responsavel, turmas, etc., conforme necessário (ex.: via service)
+		// Configurar responsável e turmas conforme necessário (ex.: via service)
 		return aluno;
 	}
 }

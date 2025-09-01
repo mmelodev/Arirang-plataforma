@@ -1,194 +1,136 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Aluno - Formulário</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" th:href="@{/css/forms.css}" />
-    <link rel="stylesheet" th:href="@{/css/header.css}" />
-    <link rel="stylesheet" th:href="@{/css/home.css?v=1.0}" />
+    <title>Formulário de Aluno</title>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 100%; max-width: 300px; padding: 5px; }
+        .error { color: red; }
+    </style>
 </head>
 <body>
-<div class="slider-thumb"></div>
-<div class="main-nav" style="margin-bottom: 1rem;">
-    <div class="logo">
-        <a th:href="@{/}"><img th:src="@{/img/horizontal_negativa.png}" alt="Logo" /></a>
+<div th:if="${error}" class="error" th:text="${error}"></div>
+
+<!-- Único formulário com ação dinâmica baseada em isNew -->
+<form th:action="@{${isNew} ? '/alunos' : '/alunos/atualizar/' + ${aluno.id}}" th:method="post" th:object="${aluno}">
+    <div class="form-group">
+        <label for="nomeCompleto">Nome Completo:</label>
+        <input type="text" id="nomeCompleto" th:field="*{nomeCompleto}" required />
+        <div th:if="${#fields.hasErrors('nomeCompleto')}" class="error" th:errors="*{nomeCompleto}"></div>
     </div>
-    <nav>
-        <ul class="nav-list">
-            <a th:href="@{/}"><li class="nav-element">Home</li></a>
-            <a th:href="@{/alunos/lista}"><li class="nav-element active">Alunos</li></a>
-            <a th:href="@{/turmas}"><li class="nav-element">Turmas</li></a>
-            <a th:href="@{/cadastro}"><li class="nav-element">Cadastro</li></a>
-        </ul>
-    </nav>
-</div>
 
-<div class="page-container">
-    <div class="form-card">
-        <h2 style="margin-top:0">Aluno</h2>
-        <div th:if="${error}" class="error-message" th:text="${error}"></div>
-        <form class="form-root" method="post" th:action="@{${isNew} ? {/alunos} : {/alunos/atualizar/{id}(id=${aluno.id})}}" th:object="${aluno}">
-            <input type="hidden" th:field="*{id}" />
-
-            <div class="row">
-                <div class="field">
-                    <label>Nome completo</label>
-                    <input th:field="*{nomeCompleto}" placeholder="Nome" required>
-                    <div th:if="${#fields.hasErrors('nomeCompleto')}" class="field-error" th:errors="*{nomeCompleto}"></div>
-                </div>
-                <div class="field">
-                    <label>Email</label>
-                    <input th:field="*{email}" type="email" placeholder="email@exemplo.com">
-                    <div th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>Telefone</label>
-                    <input th:field="*{telefone}" placeholder="(00) 00000-0000">
-                    <div th:if="${#fields.hasErrors('telefone')}" class="field-error" th:errors="*{telefone}"></div>
-                </div>
-                <div class="field">
-                    <label>CPF</label>
-                    <input th:field="*{cpf}" placeholder="000.000.000-00">
-                    <div th:if="${#fields.hasErrors('cpf')}" class="field-error" th:errors="*{cpf}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>RG</label>
-                    <input th:field="*{rg}">
-                    <div th:if="${#fields.hasErrors('rg')}" class="field-error" th:errors="*{rg}"></div>
-                </div>
-                <div class="field">
-                    <label>Órgão Expedidor</label>
-                    <input th:field="*{orgaoExpeditorRg}">
-                    <div th:if="${#fields.hasErrors('orgaoExpeditorRg')}" class="field-error" th:errors="*{orgaoExpeditorRg}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>Nacionalidade</label>
-                    <input th:field="*{nacionalidade}">
-                    <div th:if="${#fields.hasErrors('nacionalidade')}" class="field-error" th:errors="*{nacionalidade}"></div>
-                </div>
-                <div class="field">
-                    <label>UF</label>
-                    <input th:field="*{uf}" maxlength="2">
-                    <div th:if="${#fields.hasErrors('uf')}" class="field-error" th:errors="*{uf}"></div>
-                </div>
-                <div class="field">
-                    <label>Data de Nascimento</label>
-                    <input th:field="*{dataNascimento}" type="date" required>
-                    <div th:if="${#fields.hasErrors('dataNascimento')}" class="field-error" th:errors="*{dataNascimento}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>Nome Social</label>
-                    <input th:field="*{nomeSocial}">
-                    <div th:if="${#fields.hasErrors('nomeSocial')}" class="field-error" th:errors="*{nomeSocial}"></div>
-                </div>
-                <div class="field">
-                    <label>Gênero</label>
-                    <input th:field="*{genero}">
-                    <div th:if="${#fields.hasErrors('genero')}" class="field-error" th:errors="*{genero}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>Situação</label>
-                    <input th:field="*{situacao}">
-                    <div th:if="${#fields.hasErrors('situacao')}" class="field-error" th:errors="*{situacao}"></div>
-                </div>
-                <div class="field">
-                    <label>Último Nível</label>
-                    <input th:field="*{ultimoNivel}">
-                    <div th:if="${#fields.hasErrors('ultimoNivel')}" class="field-error" th:errors="*{ultimoNivel}"></div>
-                </div>
-            </div>
-
-            <h3>Endereço</h3>
-            <div class="row">
-                <div class="field">
-                    <label>Rua</label>
-                    <input th:field="*{endereco.rua}" required>
-                    <div th:if="${#fields.hasErrors('endereco.rua')}" class="field-error" th:errors="*{endereco.rua}"></div>
-                </div>
-                <div class="field">
-                    <label>Número</label>
-                    <input th:field="*{endereco.numero}" required>
-                    <div th:if="${#fields.hasErrors('endereco.numero')}" class="field-error" th:errors="*{endereco.numero}"></div>
-                </div>
-                <div class="field">
-                    <label>Bairro</label>
-                    <input th:field="*{endereco.bairro}" required>
-                    <div th:if="${#fields.hasErrors('endereco.bairro')}" class="field-error" th:errors="*{endereco.bairro}"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="field">
-                    <label>Complemento</label>
-                    <input th:field="*{endereco.complemento}">
-                    <div th:if="${#fields.hasErrors('endereco.complemento')}" class="field-error" th:errors="*{endereco.complemento}"></div>
-                </div>
-                <div class="field">
-                    <label>CEP</label>
-                    <input th:field="*{endereco.cep}" required>
-                    <div th:if="${#fields.hasErrors('endereco.cep')}" class="field-error" th:errors="*{endereco.cep}"></div>
-                </div>
-                <div class="field">
-                    <label>Cidade</label>
-                    <input th:field="*{endereco.cidade}" required>
-                    <div th:if="${#fields.hasErrors('endereco.cidade')}" class="field-error" th:errors="*{endereco.cidade}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>Responsável ID</label>
-                    <input th:field="*{responsavelId}" type="number">
-                    <div th:if="${#fields.hasErrors('responsavelId')}" class="field-error" th:errors="*{responsavelId}"></div>
-                </div>
-                <div class="field">
-                    <label>Grau de Parentesco</label>
-                    <input th:field="*{grauParentesco}">
-                    <div th:if="${#fields.hasErrors('grauParentesco')}" class="field-error" th:errors="*{grauParentesco}"></div>
-                </div>
-                <div class="field">
-                    <label>Responsável Financeiro</label>
-                    <input th:field="*{responsavelFinanceiro}" type="checkbox">
-                    <div th:if="${#fields.hasErrors('responsavelFinanceiro')}" class="field-error" th:errors="*{responsavelFinanceiro}"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label>Turmas</label>
-                    <select th:field="*{turmaIds}" multiple>
-                        <option th:each="turma : ${turmas}"
-                                th:value="${turma.id}"
-                                th:text="${turma.nomeTurma}"
-                                th:unless="${turmas == null or #lists.isEmpty(turmas)}">
-                        </option>
-                        <option th:if="${turmas == null or #lists.isEmpty(turmas)}" value="" disabled>Sem turmas disponíveis</option>
-                    </select>
-                    <div th:if="${#fields.hasErrors('turmaIds')}" class="field-error" th:errors="*{turmaIds}"></div>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button type="submit" class="btn-primary">Salvar</button>
-                <a href="/alunos/lista" class="btn-secondary">Cancelar</a>
-            </div>
-        </form>
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" />
+        <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
     </div>
-</div>
+
+    <div class="form-group">
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" th:field="*{cpf}" />
+        <div th:if="${#fields.hasErrors('cpf')}" class="error" th:errors="*{cpf}"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="rg">RG:</label>
+        <input type="text" id="rg" th:field="*{rg}" />
+    </div>
+
+    <div class="form-group">
+        <label for="orgaoExpeditorRg">Órgão Expeditor RG:</label>
+        <input type="text" id="orgaoExpeditorRg" th:field="*{orgaoExpeditorRg}" />
+    </div>
+
+    <div class="form-group">
+        <label for="nacionalidade">Nacionalidade:</label>
+        <input type="text" id="nacionalidade" th:field="*{nacionalidade}" />
+    </div>
+
+    <div class="form-group">
+        <label for="uf">UF:</label>
+        <input type="text" id="uf" th:field="*{uf}" />
+    </div>
+
+    <div class="form-group">
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" th:field="*{telefone}" />
+    </div>
+
+    <div class="form-group">
+        <label for="dataNascimento">Data de Nascimento:</label>
+        <input type="date" id="dataNascimento" th:field="*{dataNascimento}" required />
+        <div th:if="${#fields.hasErrors('dataNascimento')}" class="error" th:errors="*{dataNascimento}"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="nomeSocial">Nome Social:</label>
+        <input type="text" id="nomeSocial" th:field="*{nomeSocial}" />
+    </div>
+
+    <div class="form-group">
+        <label for="genero">Gênero:</label>
+        <input type="text" id="genero" th:field="*{genero}" />
+    </div>
+
+    <div class="form-group">
+        <label for="situacao">Situação:</label>
+        <input type="text" id="situacao" th:field="*{situacao}" />
+    </div>
+
+    <div class="form-group">
+        <label for="ultimoNivel">Último Nível:</label>
+        <input type="text" id="ultimoNivel" th:field="*{ultimoNivel}" />
+    </div>
+
+    <div class="form-group">
+        <label>Endereço:</label>
+        <input type="text" th:field="*{endereco.logradouro}" placeholder="Logradouro" />
+        <input type="text" th:field="*{endereco.numero}" placeholder="Número" />
+        <input type="text" th:field="*{endereco.complemento}" placeholder="Complemento" />
+        <input type="text" th:field="*{endereco.bairro}" placeholder="Bairro" />
+        <input type="text" th:field="*{endereco.cidade}" placeholder="Cidade" />
+        <input type="text" th:field="*{endereco.estado}" placeholder="Estado" />
+        <input type="text" th:field="*{endereco.cep}" placeholder="CEP" />
+        <div th:if="${#fields.hasErrors('endereco')}" class="error" th:errors="*{endereco}"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="grauParentesco">Grau de Parentesco:</label>
+        <input type="text" id="grauParentesco" th:field="*{grauParentesco}" />
+    </div>
+
+    <div class="form-group">
+        <label>Responsável Financeiro:</label>
+        <input type="checkbox" id="responsavelFinanceiro" th:field="*{responsavelFinanceiro}" />
+    </div>
+
+    <div th:if="${aluno.responsavelFinanceiro}" class="form-group">
+        <label for="nomeResponsavel">Nome do Responsável:</label>
+        <input type="text" id="nomeResponsavel" th:field="*{nomeResponsavel}" />
+        <div th:if="${#fields.hasErrors('nomeResponsavel')}" class="error" th:errors="*{nomeResponsavel}"></div>
+
+        <label for="cpfResponsavel">CPF do Responsável:</label>
+        <input type="text" id="cpfResponsavel" th:field="*{cpfResponsavel}" />
+        <div th:if="${#fields.hasErrors('cpfResponsavel')}" class="error" th:errors="*{cpfResponsavel}"></div>
+
+        <label for="telefoneResponsavel">Telefone do Responsável:</label>
+        <input type="text" id="telefoneResponsavel" th:field="*{telefoneResponsavel}" />
+
+        <label for="emailResponsavel">Email do Responsável:</label>
+        <input type="email" id="emailResponsavel" th:field="*{emailResponsavel}" />
+        <div th:if="${#fields.hasErrors('emailResponsavel')}" class="error" th:errors="*{emailResponsavel}"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="turmaIds">Turmas:</label>
+        <select id="turmaIds" th:field="*{turmaIds}" multiple>
+            <option th:each="turma : ${turmas}" th:value="${turma.id}" th:text="${turma.nomeTurma}"></option>
+        </select>
+    </div>
+
+    <button type="submit">Salvar</button>
+</form>
+
 </body>
 </html>

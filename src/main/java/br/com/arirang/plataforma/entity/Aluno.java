@@ -6,65 +6,77 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Table(name = "alunos")
 public class Aluno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nome_completo", nullable = false, length = 150)
+    @Column(nullable = false, length = 150)
     private String nomeCompleto;
 
-    @Column(name = "email", nullable = true, length = 150)
+    @Column(length = 150)
     private String email;
 
-    @Column(name = "cpf", nullable = true, length = 14)
+    @Column(length = 14)
     private String cpf;
 
-    @Column(name = "rg", nullable = true, length = 20)
+    @Column(length = 20)
     private String rg;
 
-    @Column(name = "orgao_expeditor_rg", nullable = true, length = 50)
+    @Column(length = 50)
     private String orgaoExpeditorRg;
 
-    @Column(name = "nacionalidade", nullable = true, length = 60)
+    @Column(length = 60)
     private String nacionalidade;
 
-    @Column(name = "uf", nullable = true, length = 2)
+    @Column(length = 2)
     private String uf;
 
-    @Column(name = "telefone", nullable = true, length = 20)
+    @Column(length = 20)
     private String telefone;
 
-    @Column(name = "data_nascimento", nullable = false)
+    @Column(nullable = false)
     private LocalDate dataNascimento;
 
-    @Column(name = "nome_social", nullable = true, length = 150)
+    @Column(length = 150)
     private String nomeSocial;
 
-    @Column(name = "genero", nullable = true, length = 30)
+    @Column(length = 30)
     private String genero;
 
-    @Column(name = "situacao", nullable = true, length = 30)
+    @Column(length = 30)
     private String situacao;
 
-    @Column(name = "ultimo_nivel", nullable = true, length = 60)
+    @Column(length = 60)
     private String ultimoNivel;
 
     @Embedded
     private Endereco endereco;
 
-    @Column(name = "grau_parentesco", nullable = true, length = 60)
+    @Column(length = 60)
     private String grauParentesco;
 
-    @Column(name = "responsavel_financeiro", nullable = false)
     private boolean responsavelFinanceiro;
+
+    @Column(length = 150)
+    private String nomeResponsavel;
+
+    @Column(length = 14)
+    private String cpfResponsavel;
+
+    @Column(length = 20)
+    private String telefoneResponsavel;
+
+    @Column(length = 150)
+    private String emailResponsavel;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "responsavel_id")
     private Responsavel responsavel;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "aluno_turma",
             joinColumns = @JoinColumn(name = "aluno_id"),
@@ -107,6 +119,14 @@ public class Aluno {
     public void setGrauParentesco(String grauParentesco) { this.grauParentesco = grauParentesco; }
     public boolean isResponsavelFinanceiro() { return responsavelFinanceiro; }
     public void setResponsavelFinanceiro(boolean responsavelFinanceiro) { this.responsavelFinanceiro = responsavelFinanceiro; }
+    public String getNomeResponsavel() { return nomeResponsavel; }
+    public void setNomeResponsavel(String nomeResponsavel) { this.nomeResponsavel = nomeResponsavel; }
+    public String getCpfResponsavel() { return cpfResponsavel; }
+    public void setCpfResponsavel(String cpfResponsavel) { this.cpfResponsavel = cpfResponsavel; }
+    public String getTelefoneResponsavel() { return telefoneResponsavel; }
+    public void setTelefoneResponsavel(String telefoneResponsavel) { this.telefoneResponsavel = telefoneResponsavel; }
+    public String getEmailResponsavel() { return emailResponsavel; }
+    public void setEmailResponsavel(String emailResponsavel) { this.emailResponsavel = emailResponsavel; }
     public Responsavel getResponsavel() { return responsavel; }
     public void setResponsavel(Responsavel responsavel) { this.responsavel = responsavel; }
     public List<Turma> getTurmas() { return turmas; }

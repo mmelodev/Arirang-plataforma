@@ -27,9 +27,7 @@ public class AlunoRestController {
 
     private AlunoDTO convertToDTO(Aluno aluno) {
         if (aluno.getDataNascimento() == null) {
-            // This case should ideally not happen if data is consistent
             logger.warn("Data de nascimento nula para o aluno com ID: {}", aluno.getId());
-            // Handle appropriately, maybe return a DTO with null date or throw a more specific exception
         }
         return new AlunoDTO(
                 aluno.getId(),
@@ -41,15 +39,18 @@ public class AlunoRestController {
                 aluno.getNacionalidade(),
                 aluno.getUf(),
                 aluno.getTelefone(),
-                aluno.getDataNascimento(), // Returns LocalDate directly
+                aluno.getDataNascimento(),
                 aluno.getNomeSocial(),
                 aluno.getGenero(),
                 aluno.getSituacao(),
                 aluno.getUltimoNivel(),
                 aluno.getEndereco(),
-                aluno.getResponsavel() != null ? aluno.getResponsavel().getId() : null,
                 aluno.getGrauParentesco(),
                 aluno.isResponsavelFinanceiro(),
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getNomeCompleto() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getCpf() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getTelefone() : null,
+                aluno.getResponsavel() != null && aluno.isResponsavelFinanceiro() ? aluno.getResponsavel().getEmail() : null,
                 aluno.getTurmas() != null ? aluno.getTurmas().stream().map(Turma::getId).collect(Collectors.toList()) : Collections.emptyList()
         );
     }
@@ -78,7 +79,7 @@ public class AlunoRestController {
         } catch (Exception e) {
             logger.error("Erro ao criar aluno via API: ", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }    
+        }
     }
 
     @PutMapping("/{id}")
@@ -87,10 +88,9 @@ public class AlunoRestController {
             Aluno aluno = alunoService.atualizarAluno(id, alunoAtualizado);
             return ResponseEntity.ok(convertToDTO(aluno));
         } catch (RuntimeException e) {
-             // Catches specific exceptions like "Aluno não encontrado"
             logger.error("Erro ao atualizar aluno com ID {} via API: {}", id, e.getMessage());
             return ResponseEntity.notFound().build();
-        } 
+        }
         catch (Exception e) {
             logger.error("Erro geral ao atualizar aluno com ID {} via API: ", id, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

@@ -6,6 +6,7 @@ import br.com.arirang.plataforma.entity.Responsavel;
 import br.com.arirang.plataforma.entity.Turma;
 import br.com.arirang.plataforma.repository.AlunoRepository;
 import br.com.arirang.plataforma.repository.ResponsavelRepository;
+import br.com.arirang.plataforma.repository.SolicitacaoMudancaTurmaRepository;
 import br.com.arirang.plataforma.repository.TurmaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,12 +33,14 @@ public class AlunoService {
     @Autowired
     private TurmaRepository turmaRepository;
 
+    @Autowired
+    private SolicitacaoMudancaTurmaRepository solicitacaoMudancaTurmaRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     public List<Aluno> listarTodosAlunos() {
         try {
-            // Usando LEFT JOIN FETCH para buscar as associações e evitar o erro de lazy loading
             List<Aluno> alunos = entityManager.createQuery(
                             "SELECT DISTINCT a FROM Aluno a LEFT JOIN FETCH a.turmas LEFT JOIN FETCH a.responsavel", Aluno.class)
                     .getResultList();
@@ -81,17 +84,24 @@ public class AlunoService {
             aluno.setGrauParentesco(alunoDTO.grauParentesco());
             aluno.setResponsavelFinanceiro(alunoDTO.responsavelFinanceiro());
 
-            if (alunoDTO.responsavelId() != null) {
-                Responsavel responsavel = responsavelRepository.findById(alunoDTO.responsavelId())
-                        .orElseThrow(() -> new RuntimeException("Responsável não encontrado com ID: " + alunoDTO.responsavelId()));
+            if (alunoDTO.responsavelFinanceiro()) {
+                Responsavel responsavel = new Responsavel();
+                responsavel.setNomeCompleto(alunoDTO.nomeResponsavel());
+                responsavel.setEmail(alunoDTO.emailResponsavel());
+                responsavel.setTelefone(alunoDTO.telefoneResponsavel());
+                responsavel.setCpf(alunoDTO.cpfResponsavel());
+                responsavel.setRg(null); // RG pode ser opcional, ajustar conforme necessário
+                responsavel = responsavelRepository.save(responsavel);
                 aluno.setResponsavel(responsavel);
+            } else {
+                aluno.setResponsavel(null);
             }
 
-            if (alunoDTO.turmaIds() != null && !alunoDTO.turmaIds().isEmpty()) {
+            if (alunoDTO.turmaIds() == null || alunoDTO.turmaIds().isEmpty()) {
+                aluno.setTurmas(new java.util.ArrayList<>());
+            } else {
                 List<Turma> turmas = turmaRepository.findAllById(alunoDTO.turmaIds());
                 aluno.setTurmas(turmas);
-            } else {
-                aluno.setTurmas(new java.util.ArrayList<>()); // Inicializa como lista vazia
             }
 
             Aluno savedAluno = alunoRepository.save(aluno);
@@ -117,7 +127,7 @@ public class AlunoService {
             alunoExistente.setNacionalidade(alunoDTO.nacionalidade());
             alunoExistente.setUf(alunoDTO.uf());
             alunoExistente.setTelefone(alunoDTO.telefone());
-            alunoExistente.setDataNascimento(alunoDTO.dataNascimento()); // Direct assignment
+            alunoExistente.setDataNascimento(alunoDTO.dataNascimento());
             alunoExistente.setNomeSocial(alunoDTO.nomeSocial());
             alunoExistente.setGenero(alunoDTO.genero());
             alunoExistente.setSituacao(alunoDTO.situacao());
@@ -126,10 +136,32 @@ public class AlunoService {
             alunoExistente.setGrauParentesco(alunoDTO.grauParentesco());
             alunoExistente.setResponsavelFinanceiro(alunoDTO.responsavelFinanceiro());
 
-            if (alunoDTO.responsavelId() != null) {
-                Responsavel responsavel = responsavelRepository.findById(alunoDTO.responsavelId())
-                        .orElseThrow(() -> new RuntimeException("Responsável não encontrado com ID: " + alunoDTO.responsavelId()));
-                alunoExistente.setResponsavel(responsavel);
+            if (alunoDTO.responsavelFinanceiro()) {
+                if (alunoExistente.getResponsavel() == null) {
+                    Responsavel responsavel = new Responsavel();
+                    responsavel.setNomeCompleto(alunoDTO.nomeResponsavel());
+                    responsavel.setEmail(alunoDTO.emailResponsavel());
+                    responsavel.setTelefone(alunoDTO.telefoneResponsavel());
+                    responsavel.setCpf(alunoDTO.cpfResponsavel());
+                    responsavel.setRg(null);
+                    responsavel = responsavelRepository.save(responsavel);
+                    alunoExistente.setResponsavel(responsavel);
+                } else {
+                    Responsavel responsavel = alunoExistente.getResponsavel();
+                    responsavel.setNomeCompleto(alunoDTO.nomeResponsavel());
+                    responsavel.setEmail(alunoDTO.emailResponsavel());
+                    responsavel.setTelefone(alunoDTO.telefoneResponsavel());
+                    responsavel.setCpf(alunoDTO.cpfResponsavel());
+                    responsavel.setRg(null);
+                    responsavelRepository.save(responsavel);
+                }
+            } else {
+                alunoExistente.setResponsavel(null);
+                alunoExistente.setNomeResponsavel(null);
+                alunoExistente.setCpfResponsavel(null);
+                alunoExistente.setTelefoneResponsavel(null);
+                alunoExistente.setEmailResponsavel(null);
+                alunoExistente.setGrauParentesco(null);
             }
 
             if (alunoDTO.turmaIds() != null && !alunoDTO.turmaIds().isEmpty()) {
@@ -150,17 +182,11 @@ public class AlunoService {
 
     @Transactional
     public void deletarAluno(Long id) {
-        try {
-            if (alunoRepository.existsById(id)) {
-                alunoRepository.deleteById(id);
-                logger.info("Aluno deletado com ID: {}", id);
-            } else {
-                throw new RuntimeException("Aluno não encontrado com ID: " + id);
-            }
-        } catch (Exception e) {
-            logger.error("Erro ao deletar aluno com ID {}: ", id, e);
-            throw new RuntimeException("Erro ao deletar aluno: " + e.getMessage());
-        }
+        Aluno aluno = alunoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado com ID: " + id));
+
+        solicitacaoMudancaTurmaRepository.deleteByAlunoId(id);
+        alunoRepository.delete(aluno);
     }
 
     @Transactional
@@ -174,7 +200,7 @@ public class AlunoService {
             if (aluno.getTurmas() == null) {
                 aluno.setTurmas(new java.util.ArrayList<>());
             }
-            
+
             if (aluno.getTurmas().stream().noneMatch(t -> t.getId().equals(turmaId))) {
                 aluno.getTurmas().add(turma);
                 alunoRepository.save(aluno);

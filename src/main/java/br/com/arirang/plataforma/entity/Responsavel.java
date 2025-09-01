@@ -1,6 +1,9 @@
 package br.com.arirang.plataforma.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 @Entity
@@ -11,14 +14,25 @@ public class Responsavel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 150)
     private String nomeCompleto;
-    private String email;
-    private String telefone;
-    private String cpf;
-    private String rg;
-    private String endereco;
 
-    @OneToMany(mappedBy = "responsavel")
+    @Email
+    @Column(length = 150)
+    private String email;
+
+    @Column(length = 20)
+    private String telefone;
+
+    @Size(max = 14)
+    @Column(length = 14)
+    private String cpf;
+
+    @Size(max = 20)
+    @Column(length = 20)
+    private String rg;
+
+    @OneToMany(mappedBy = "responsavel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Aluno> alunos;
 
     // Getters e Setters
@@ -34,8 +48,6 @@ public class Responsavel {
     public void setCpf(String cpf) { this.cpf = cpf; }
     public String getRg() { return rg; }
     public void setRg(String rg) { this.rg = rg; }
-    public String getEndereco() { return endereco; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
     public List<Aluno> getAlunos() { return alunos; }
     public void setAlunos(List<Aluno> alunos) { this.alunos = alunos; }
 }
